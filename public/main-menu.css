@@ -1,0 +1,84 @@
+body {
+    background-color: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+#user-info {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #333; /* Цвет фона для аватара */
+    margin-bottom: 10px;
+}
+
+#user-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#logout-link {
+    background-color: #d9534f; /* Цвет кнопки */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#logout-link:hover {
+    background-color: #c9302c; /* Цвет кнопки при наведении */
+}
+
+/* Скрыть ползунок у элемента <audio> */
+audio::-webkit-media-controls-panel {
+    display: none !important;
+  }
+  
+  /* Скрыть ползунок у элемента <audio> для других браузеров */
+  audio::-webkit-media-controls {
+    display: none !important;
+  }
+  
+  /* Добавить стили для отображения только кнопок управления вместо ползунка */
+  audio::-webkit-media-controls-play-button,
+  audio::-webkit-media-controls-volume-slider {
+    display: inline-block !important;
+  }
+  

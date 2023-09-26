@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="logged.css">
+</head>
+<body>
+    <h1>User Dashboard</h1>
+    <p>Status: <span id="userStatus"></span></p>
+    <form action="/logout" method="post">
+        <button type="submit">Logout</button>
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        fetch('/user-status')
+        .then(response => response.json())
+        .then(data => {
+            const userStatus = data.userStatus;
+            const userStatusElement = document.getElementById('userStatus');
+            userStatusElement.textContent = userStatus;
+        })
+        .catch(error => {
+            console.error('Error fetching user status: ' + error);
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="login.css">
+    <title>Login Form</title>
+</head>
+<body>
+    <h2>Login Form</h2>
+    <form id="loginForm" action="/login" method="post">
+        <label for="login">Username:</label>
+        <input type="text" id="login" name="login" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <input type="submit" value="Login">
+    </form>
+    <a href="/forgot-password">Forgot Password?</a>
+    <br>
+    <a href="/registration">Are you still not registered?</a>
+</body>
+</html>
