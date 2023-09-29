@@ -34,6 +34,7 @@ io.on('connection', (socket) => {
         name: roomName,
         creator: userLogin,
         players: [userLogin],
+        ready: 0,
     };
     rooms.push(room);
     io.emit('room-created', room);
@@ -73,6 +74,26 @@ io.on('connection', (socket) => {
         socket.emit('send-players', null);
       }
     });
+
+    socket.on('player-ready', (room) => {
+      const temp = rooms.find((r) => r.name === room);
+      if (temp) {
+          for (const player of temp.players) {
+            if (player === userLogin) {
+                playerFound = true;
+                break;
+            }
+        }
+          if (playerFound) {
+            temp.ready++;
+            io.emit('ready', (userLogin));
+              const readyPlayers = temp.ready;
+              if (readyPlayers === 2) {
+                  io.emit('start-game');
+              }
+          }
+      }
+  });
 
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');

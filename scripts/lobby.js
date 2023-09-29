@@ -22,11 +22,32 @@ socket.emit('get-players', roomid);
 socket.on('send-players', (players) => {
   const playerListContainer = document.getElementById('player-list-container');
   playerListContainer.innerHTML = '';
-  console.log(players);
-
   players.forEach((player) => {
   const playerElement = document.createElement('div');
   playerElement.textContent = player;
   playerListContainer.appendChild(playerElement);
 });
+});
+
+const startButton = document.getElementById('start-button');
+
+let isReady = false;
+
+startButton.addEventListener('click', () => {
+  if (!isReady) {
+    socket.emit('player-ready', roomid);
+    isReady = true;
+  }
+});
+
+socket.on('ready', (playerName) => {
+  const playerListContainer = document.getElementById('player-list-container');
+  const playerElement = document.createElement('div');
+  playerElement.textContent = `${playerName} (готов)`;
+  playerListContainer.appendChild(playerElement);
+});
+
+
+socket.on('start-game', () => {
+  window.location.href = '/table.html';
 });

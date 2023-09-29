@@ -2,9 +2,8 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-image: url(Untitled-2.png);
+    background-image: url(images/Untitled-2.png);
     background-size: cover;
-    /* Выравниваем изображение по центру */
     background-position: center;
     background-attachment: fixed;
     overflow: hidden;
