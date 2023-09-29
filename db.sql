@@ -1,6 +1,6 @@
-CREATE DATABASE ucode_web;
-CREATE USER 'ipustovyj'@'localhost' IDENTIFIED BY 'securepass';
-GRANT ALL ON ucode_web.* TO 'ipustovyj'@'localhost';
+CREATE DATABASE IF NOT EXISTS ucode_web;
+CREATE USER 'dnaranoyc'@'localhost' IDENTIFIED BY 'securepass';
+GRANT ALL ON ucode_web.* TO 'dnaranovyc'@'localhost';
 
 CREATE TABLE IF NOT EXISTS ucode_web.users (
     id INT AUTO_INCREMENT PRIMARY KEY,
