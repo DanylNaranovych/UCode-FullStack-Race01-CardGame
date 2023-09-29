@@ -82,3 +82,101 @@ audio::-webkit-media-controls-panel {
     display: inline-block !important;
   }
   
+  /* Стиль для затемнения экрана */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Черный полупрозрачный фон */
+    display: none; /* По умолчанию скрыто */
+}
+
+/* Стиль для панели с кнопками */
+#game-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff; /* Цвет фона панели */
+    padding: 20px;
+    border-radius: 10px;
+    display: none; /* По умолчанию скрыто */
+}
+
+/* Стиль для кнопок */
+#game-panel button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    background-color: #007bff; /* Цвет фона кнопок */
+    color: #fff; /* Цвет текста кнопок */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#game-panel button:hover {
+    background-color: #0056b3; /* Цвет фона кнопок при наведении */
+}
+
+/* Стили для списка комнат */
+#room-list-container {
+    margin-top: 20px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#room-list {
+    list-style: none;
+    padding: 0;
+}
+
+#room-list li {
+    background-color: #555;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#room-list li:hover {
+    background-color: #007bff;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#room-list-container ul {
+    padding-left: 0;
+}
+
+#room-list-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#room-list-container li span {
+    font-weight: bold;
+}
+
+#room-list-container li button {
+    background-color: #d9534f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#room-list-container li button:hover {
+    background-color: #c9302c;
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Card Game</title>
     <link rel="stylesheet" href="main-menu.css">
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
     <div class="container">
@@ -14,16 +15,22 @@
             <span id="user-name">Undefined</span>
             <a href="/logout" id="logout-link">Logout</a>
         </div>
-        <ul>
-            <li><a href="#">Play</a></li>
+        <ul id = "menu">
+            <li><a href="#" id="play-button">Play</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Help</a></li>
         </ul>
+        <div id="overlay"></div>
+        <div id="game-panel" style="display: none;">
+            <button id="create-room-button">Create room</button>
+            <button id="find-room-button">Find room</button>
+            <div id="room-list-container">
+                <ul id="room-list"></ul>
+            </div>
+        </div>
     </div>
-    <audio controls autoplay>
-        <source src="Hate.mp3" type="audio/mpeg">
-    </audio>
     <script src="main-menu.js"></script>
     <script src="user-info.js"></script>
+    <script src="create-room.js"></script>
 </body>
 </html>

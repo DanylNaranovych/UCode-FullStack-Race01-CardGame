@@ -1,0 +1,43 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-image: url(Untitled-2.png);
+    background-size: cover;
+    /* Выравниваем изображение по центру */
+    background-position: center;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+.hand {
+    min-height: 100%;
+    display: flex;
+    /* Устанавливаем направление расположения в горизонтальную полосу */
+    flex-direction: row;
+    /* Выравниваем по горизонтали по центру */
+    justify-content: center;
+    /* Выравниваем по вертикали к нижней части контейнера */
+    align-items: flex-end;
+    /* Ограничиваем ширину .container до 500px */
+    max-width: 600px;
+    /* Центрируем контейнер по горизонтали */
+    margin: 0 auto;
+}
+
+.card-in-hand {
+    /* Устанавливаем ширину и центрируем по горизонтали */
+    width: 70px;
+    margin: 0 auto;
+    text-align: center;
+    /* Добавляем отступы внутри .content */
+    padding: 10px;
+    background-color: red;
+    border-radius: 10px;
+    /* Добавляем плавное изменение масштаба при hover */
+    transition: transform 0.3s , margin-top 0.3s;
+}
+
+.card-in-hand:hover {
+    transform: scale(1.5) translateY(-18px);
+}

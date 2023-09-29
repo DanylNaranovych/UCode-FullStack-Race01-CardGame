@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     checkAuthenticationStatus();
-
     function checkAuthenticationStatus() {
         fetch('/user-status')
             .then(response => {
