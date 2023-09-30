@@ -46,5 +46,3 @@ socket.on('send-rooms', (rooms) => {
 socket.on('room-created', (room) => {
     window.location.href = `/lobby.html?roomId=${room.name}`;
 });
-
-

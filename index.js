@@ -95,6 +95,37 @@ io.on('connection', (socket) => {
       }
   });
 
+  async function getRandomCard(db) {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM ucode_web.cards ORDER BY RAND() LIMIT 1;';
+      let card;
+      const values = [card];
+  
+      db.query(sql, values, (err, results) => {
+        if (err) {
+          console.error('Database error: ' + err);
+          reject(err);
+          return;
+        }
+  
+        if (results.length === 0) {
+          resolve(null);
+        } else {
+          const user = results[0];
+          resolve(user);
+        }
+      });
+    });
+  }
+
+  getRandomCard(db)
+    .then((randomCard) => {
+      if (randomCard) {
+        console.log(randomCard);
+        socket.emit('randomCard', randomCard);
+      }
+    });
+
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');
   });
@@ -236,7 +267,6 @@ app.get('/user-info', (req, res) => {
 app.get('/lobby', (req, res) => {
   res.sendFile(__dirname + '/views/lobby.html');
 });
-
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000');
