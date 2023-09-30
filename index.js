@@ -88,11 +88,20 @@ io.on('connection', (socket) => {
             temp.ready++;
             io.emit('ready', (userLogin));
               const readyPlayers = temp.ready;
-              if (readyPlayers === 2) {
+              if (readyPlayers === 1) {
                   io.emit('start-game');
               }
           }
       }
+  });
+
+  socket.on('get-card', () => {
+    getRandomCard(db)
+    .then((randomCard) => {
+      if (randomCard) {
+        io.emit('randomCard', randomCard);
+      }
+    });
   });
 
   async function getRandomCard(db) {
@@ -117,14 +126,6 @@ io.on('connection', (socket) => {
       });
     });
   }
-
-  getRandomCard(db)
-    .then((randomCard) => {
-      if (randomCard) {
-        console.log(randomCard);
-        socket.emit('randomCard', randomCard);
-      }
-    });
 
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');

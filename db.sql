@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS ucode_web;
-CREATE USER 'dnaranoyc'@'localhost' IDENTIFIED BY 'securepass';
+CREATE USER IF NOT EXISTS 'dnaranoyc'@'localhost' IDENTIFIED BY 'securepass';
 GRANT ALL ON ucode_web.* TO 'dnaranovyc'@'localhost';
 
 CREATE TABLE IF NOT EXISTS ucode_web.users (
