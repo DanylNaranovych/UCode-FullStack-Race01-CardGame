@@ -5,8 +5,6 @@ const socket = io();
 
 // Function to create a card element with stats
 function createCard(card) {
-  console.log(card);
-
   const cardElement = document.createElement("div");
   cardElement.className = "card";
   cardElement.draggable = true;
@@ -72,35 +70,9 @@ for (let index = 0; index < 3; index++) {
   socket.emit('get-card');
 }
 socket.on("randomCard", (randomCard) => {
-  console.log(randomCard);
   createCard(randomCard);
 });
 
 // Add drop event listener to the table field
 tableField.addEventListener("dragover", handleDragOver);
 tableField.addEventListener("drop", handleDrop);
-
-
-
-// Optional function to load cards into the played cards slots
-function loadPlayedCards(cards) {
-  const playedCardsContainer = document.querySelector('.played-cards');
-  
-  // Iterate through the played cards slots and add cards
-  for (let i = 0; i < playedCardsContainer.children.length; i++) {
-      const cardElement = createCard(cards[i]); // Assuming cards is an array of card data objects
-      playedCardsContainer.children[i].appendChild(cardElement);
-  }
-}
-
-// Call the function to load cards into the played cards slots
-const playedCardsData = [
-  { id: 6, name: 'Played Card 1', cost: 3, attack: 2, health: 4 },
-  { id: 7, name: 'Played Card 2', cost: 2, attack: 3, health: 2 },
-  { id: 8, name: 'Played Card 3', cost: 4, attack: 1, health: 5 },
-  { id: 9, name: 'Played Card 4', cost: 1, attack: 4, health: 1 },
-  { id: 10, name: 'Played Card 5', cost: 5, attack: 5, health: 5 },
-  { id: 11, name: 'Played Card 6', cost: 6, attack: 6, health: 6 }
-];
-
-loadPlayedCards(playedCardsData);
