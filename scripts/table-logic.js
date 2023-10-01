@@ -76,3 +76,28 @@ socket.on("randomCard", (randomCard) => {
 // Add drop event listener to the table field
 tableField.addEventListener("dragover", handleDragOver);
 tableField.addEventListener("drop", handleDrop);
+
+
+
+
+
+
+
+// Function to handle card click event
+function handleCardClick(event) {
+  const card = event.target;
+
+  if (card.classList.contains("card") && card.parentElement.classList.contains("my-card")) {
+      // Remove the "glow" class from all cards in the "my-card" container
+      const myCards = document.querySelectorAll(".my-card .card");
+      myCards.forEach((myCard) => {
+          myCard.classList.remove("glow");
+      });
+
+      // Toggle the "glow" class on the clicked card
+      card.classList.toggle("glow");
+  }
+}
+
+// Add a click event listener to the document
+document.addEventListener("click", handleCardClick);
