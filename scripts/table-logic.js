@@ -1,5 +1,5 @@
 const hand = document.querySelector(".hand");
-const tableField = document.querySelector(".table-field");
+const tableField = document.querySelector(".my-field");
 
 const socket = io();
 
@@ -46,7 +46,7 @@ function handleDrop(event) {
   const cardElement = document.querySelector(`[data-id="${cardId}"]`);
 
   // Check if the card is dropped onto a card placeholder
-  if (event.target.classList.contains("card-placeholder")) {
+  if (event.target.classList.contains("my-card")) {
     // Clone the card and append it to the table field
     const clonedCard = cardElement.cloneNode(true);
     event.target.appendChild(clonedCard);

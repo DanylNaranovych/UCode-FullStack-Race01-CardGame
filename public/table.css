@@ -48,7 +48,7 @@ body {
     margin-top: 40px;
 }
 
-.table-field {
+.my-field {
     display: flex;
     justify-content: center;
     align-items: center; /* Center card placeholders vertically */
@@ -57,7 +57,7 @@ body {
     margin-bottom: -70px;
 }
 
-.card-placeholder {
+.my-card {
     width: 74px;
     height: 104px;
     border: 2px dashed gray;
@@ -130,21 +130,22 @@ body {
     transform: translateY(0px) scale(1);
 }
 
-.played-cards {
+.enemy-field {
     display: flex;
     justify-content: space-around;
-    width: 10%;
+
     margin-bottom: -210px;
 }
 
-.played-cards .card-placeholder {
+.enemy-field .enemy-card {
     width: 74px;
     height: 104px;
     border: 2px dashed gray;
     border-radius: 5px;
+    margin: 0 10px 10px 0;
 }
 
-.played-cards .card:hover {
+.enemy-field .card:hover {
     transform: translateY(0px) scale(1.4);
     z-index: 2;
 }
