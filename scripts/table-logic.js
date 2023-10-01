@@ -3,6 +3,11 @@ const tableField = document.querySelector(".my-field");
 
 const socket = io();
 
+let clickedCards = {
+  my: null,
+  enemy: null,
+};
+
 // Function to create a card element with stats
 function createCard(card) {
   const cardElement = document.createElement("div");
@@ -67,7 +72,7 @@ function handleDrop(event) {
 
 // Start battle
 for (let index = 0; index < 3; index++) {
-  socket.emit('get-card');
+  socket.emit("get-card");
 }
 socket.on("randomCard", (randomCard) => {
   createCard(randomCard);
@@ -97,6 +102,19 @@ function handleCardClick(event) {
       // Toggle the "glow" class on the clicked card
       card.classList.toggle("glow");
   }
+
+  const id = event.target.dataset.id;
+
+    if (event.target.parentElement.className == "my-card") {
+      clickedCards.my = id;
+    } else {
+      clickedCards.enemy = id;
+    }
+    console.log(clickedCards);
+
+    if (clickedCards.my != null && clickedCards.enemy != null) {
+      // тут запрос на сервер
+    }
 }
 
 // Add a click event listener to the document
