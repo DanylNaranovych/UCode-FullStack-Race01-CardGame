@@ -48,6 +48,6 @@ socket.on('ready', (playerName) => {
 });
 
 
-socket.on('start-game', () => {
-  window.location.href = '/table.html';
+socket.on('start-game', (roomName) => {
+  window.location.href = `/table.html?roomId=${roomName}`;
 });

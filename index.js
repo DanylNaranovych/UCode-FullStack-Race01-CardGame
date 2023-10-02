@@ -119,7 +119,7 @@ io.on('connection', (socket) => {
             io.emit('ready', (req.session.user.login));
               const readyPlayers = temp.ready;
               if (readyPlayers === 2) {
-                  io.emit('start-game');
+                  io.emit('start-game', room.name);
               }
           }
       }
