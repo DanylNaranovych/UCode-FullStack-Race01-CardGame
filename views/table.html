@@ -1,34 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="table.css" />
     <title>Game board</title>
     <script src="/socket.io/socket.io.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="game-window">
         <div class="table">
-            <div class="enemy-field">
-                <div class="enemy-card"></div>
-                <div class="enemy-card"></div>
-                <div class="enemy-card"></div>
-                <div class="enemy-card"></div>
-                <div class="enemy-card"></div>
-                <div class="enemy-card"></div>
-            </div>
 
-            <div class="my-field">
-                <div class="my-card"></div>
-                <div class="my-card"></div>
-                <div class="my-card"></div>
-                <div class="my-card"></div>
-                <div class="my-card"></div>
-                <div class="my-card"></div>
-            </div>
+            <div class="battlefield">
+                <div class="head">
+                    <div class="enemy-head"></div>
+                    <div class="enemy-hp">20 HP</div>
+                </div>
 
+                <div class="enemy-field">
+                    <div class="enemy-card"></div>
+                    <div class="enemy-card"></div>
+                    <div class="enemy-card"></div>
+                    <div class="enemy-card"></div>
+                    <div class="enemy-card"></div>
+                    <div class="enemy-card"></div>
+                </div>
+
+                <div class="my-field">
+                    <div class="my-card"></div>
+                    <div class="my-card"></div>
+                    <div class="my-card"></div>
+                    <div class="my-card"></div>
+                    <div class="my-card"></div>
+                    <div class="my-card"></div>
+                </div>
+
+                <div class="head">
+                    <div class="my-head"></div>
+                    <div class="my-hp">20 HP</div>
+                </div>
+            </div>
+            <div class="timer"></div>
         </div>
         <div class="hand">
             <!-- Cards in hand will be dynamically added here using JavaScript -->
@@ -38,4 +52,5 @@
     <script src="table-logic.js"></script>
     <!-- <script src="client-cards.js"></script> -->
 </body>
+
 </html>

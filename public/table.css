@@ -6,12 +6,14 @@ body {
     margin: 0;
     background-color: black;
 }
+
 .profiles {
     display: flex;
     flex-direction: column;
     background-color: aquamarine;
     margin-left: -840px;
 }
+
 .first-profile {
     height: 20px;
     width: 20px;
@@ -33,28 +35,68 @@ body {
     text-align: center;
 }
 
+
 .table {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Push content to the bottom */
+    flex-direction: row;
+    justify-content: center;
+    /* Push content to the bottom */
     align-items: center;
     background-image: url("images/Untitled-2.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     width: 300%;
-    height: 75vh; /* Set table height as needed */
+    height: 75vh;
+    /* Set table height as needed */
     margin-bottom: 20px;
     margin-top: 40px;
+}
+
+.head {
+    align-self: center;
+    align-content: center;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.enemy-head {
+    width: 40px;
+    height: 40px;
+    background-color: red;
+    border-radius: 100%;
+}
+
+.enemy-hp {
+    font-size: 15px;
+}
+
+.my-head {
+    width: 40px;
+    height: 40px;
+    background-color: red;
+    border-radius: 100%;
+}
+
+.my-hp {
+    font-size: 15px;
+}
+
+.battlefield {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .my-field {
     display: flex;
     justify-content: center;
-    align-items: center; /* Center card placeholders vertically */
-    flex-wrap: wrap; /* Allow card placeholders to wrap to the next line if needed */
-    height: 100%; /* Occupy the full height of the table */
-    margin-bottom: -70px;
+    align-items: center;
+    /* Center card placeholders vertically */
+
+    margin-bottom: -10px;
 }
 
 .my-card {
@@ -68,7 +110,8 @@ body {
 .hand {
     display: flex;
     justify-content: center;
-    margin-top: -130px; /* Add some space between table and hand */
+    margin-top: -130px;
+    /* Add some space between table and hand */
 }
 
 .card {
@@ -81,44 +124,54 @@ body {
     margin-right: 10px;
     cursor: pointer;
     transition: transform 0.3s;
-    position: relative; /* Add this to enable absolute positioning of stats */
+    position: relative;
+    /* Add this to enable absolute positioning of stats */
     z-index: 1;
 }
 
 .card::after {
-    content: attr(data-text); /* Display card text from the data-text attribute */
+    content: attr(data-text);
+    /* Display card text from the data-text attribute */
     position: absolute;
     top: 0;
-    left: 101%; /* Position the card text to the right of the card */
+    left: 101%;
+    /* Position the card text to the right of the card */
     background-color: rgb(255, 228, 196);
     padding: 5px;
-    width: 100px; /* Set the width to 120px */
+    width: 100px;
+    /* Set the width to 120px */
     font-size: 8px;
     border-radius: 3px;
-    white-space: normal; /* Allow text to wrap to the next line if it doesn't fit */
+    white-space: normal;
+    /* Allow text to wrap to the next line if it doesn't fit */
     text-orientation: upright;
-    display: none; /* Initially hide the card text */
-    transform: translateY(-50%); /* Vertically center the text */
+    display: none;
+    /* Initially hide the card text */
+    transform: translateY(-50%);
+    /* Vertically center the text */
 }
 
 .card:hover::after {
-    display: block; /* Show the card text on hover */
+    display: block;
+    /* Show the card text on hover */
 }
 
 .card:active::after {
-    display: none; /* Show the card text on hover */
+    display: none;
+    /* Show the card text on hover */
 }
 
 .card-stats {
     position: absolute;
-    bottom:5px;
+    bottom: 5px;
     left: 5px;
     right: 5px;
     background-color: rgba(102, 81, 50, 0.781);
     padding: 2px 5px;
     font-size: 12px;
     border-radius: 3px;
-    pointer-events: none; /* Prevent stats from interfering with drag-and-drop */
+    pointer-events: none;
+    /* Prevent stats from interfering with drag-and-drop */
 }
 
 .card:hover {
@@ -132,9 +185,9 @@ body {
 
 .enemy-field {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
 
-    margin-bottom: -210px;
+    /* margin-bottom: -210px; */
 }
 
 .enemy-field .enemy-card {
