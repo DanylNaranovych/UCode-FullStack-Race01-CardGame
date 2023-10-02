@@ -1,4 +1,5 @@
 const hand = document.querySelector(".hand");
+const enemyField = document.querySelector('.enemy-field');
 const tableField = document.querySelector(".my-field");
 
 const socket = io();
@@ -7,6 +8,34 @@ let clickedCards = {
   my: null,
   enemy: null,
 };
+
+function createEnemyCard(card) {
+  const cardElement = document.createElement("div");
+  cardElement.className = "card";
+  cardElement.draggable = true;
+  cardElement.textContent = card.name;
+
+  // Create a stats container
+  const statsElement = document.createElement("div");
+  statsElement.className = "card-stats";
+  statsElement.textContent = `Cost: ${card.cost}, Attack: ${card.damage}, Health: ${card.hp}`;
+
+  // Set the data-text attribute with the card's stats
+  cardElement.setAttribute("data-text", card.description);
+
+  // Append stats to the card
+  cardElement.appendChild(statsElement);
+
+  cardElement.dataset.id = card.id;
+  // return cardElement;
+  for (const child of enemyField.children) {
+    if (child.childElementCount == 0) {
+      console.log(child.childElementCount);
+      child.appendChild(cardElement);
+      break;
+    }
+  }
+}
 
 // Function to create a card element with stats
 function createCard(card) {
@@ -76,6 +105,7 @@ for (let index = 0; index < 3; index++) {
 }
 socket.on("randomCard", (randomCard) => {
   createCard(randomCard);
+  createEnemyCard(randomCard);
 });
 
 // Add drop event listener to the table field
