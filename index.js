@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
     const room = {
         name: roomName,
         creator: req.session.user.login,
-        players: [req.session.user.login],
+        players: [{ name:req.session.user.login, id: socket.id}],
         ready: 0,
     };
     rooms.push(room);
@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
     socket.on('join-room', (roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
-            room.players.push(req.session.user.login);
+            room.players.push({ name:req.session.user.login, id: socket.id });
             socket.join(roomName);
 
             io.emit('room-created', room);
@@ -114,7 +114,7 @@ io.on('connection', (socket) => {
       if (temp) {
         let playerFound = false;
           for (const player of temp.players) {
-            if (player === req.session.user.login) {
+            if (player.name === req.session.user.login) {
                 playerFound = true;
                 break;
             }
@@ -173,8 +173,6 @@ app.get('/', (req, res) => {
 
 let db;
 const rooms = [];
-const players = [];
-
 
 async function initializeDatabase() {
   try {
