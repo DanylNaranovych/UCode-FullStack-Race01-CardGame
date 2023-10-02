@@ -19,25 +19,54 @@ app.use(express.static('scripts'));
 app.use(express.static('avatars'));
 app.use(express.static('node_modules'));
 
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: true,
-}));
+// app.use(session({
+//   secret: 'armagedon',
+//   resave: true,
+//   saveUninitialized: true,
+// }));
 
-let userLogin;
+const sessionMiddleware = session({
+  secret: 'armagedon',
+  resave: true,
+  saveUninitialized: true
+});
+
+app.use(sessionMiddleware);
+
+io.use((socket, next) => {
+  const req = socket.handshake;
+  const res = {};
+
+  sessionMiddleware(req, res, next);
+});
 
 io.on('connection', (socket) => {
   console.log('connected to socket server');
+      const req = socket.handshake;
   socket.on('create-room', (roomName) => {
     const room = {
         name: roomName,
-        creator: userLogin,
-        players: [userLogin],
+        creator: req.session.user.login,
+        players: [req.session.user.login],
         ready: 0,
     };
     rooms.push(room);
-    io.emit('room-created', room);
+    socket.emit('room-created', room);
+  });
+
+  socket.on('send-damage', (damage, cardId, login, roomId) => {
+    console.log("check");
+    const room = rooms.find((r) => r.name === roomId);
+    let damaged;
+    for (const player of room.players) {
+      if (player.name !== login) {
+          damaged = player.name;
+      }
+    }
+
+    if(req.session.user.login === damaged) {
+      socket.emit('get-damage', damage, cardId);
+    }
   });
 
   socket.on('get-room', (roomid) => {
@@ -56,10 +85,10 @@ io.on('connection', (socket) => {
     socket.on('join-room', (roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
-            room.players.push(userLogin);
+            room.players.push(req.session.user.login);
             socket.join(roomName);
 
-            socket.emit('room-created', room);
+            io.emit('room-created', room);
             io.to(roomName).emit('send-players', room.players);
         } else {
             socket.emit('room-not-found', roomName);
@@ -78,17 +107,18 @@ io.on('connection', (socket) => {
     socket.on('player-ready', (room) => {
       const temp = rooms.find((r) => r.name === room);
       if (temp) {
+        let playerFound = false;
           for (const player of temp.players) {
-            if (player === userLogin) {
+            if (player === req.session.user.login) {
                 playerFound = true;
                 break;
             }
         }
           if (playerFound) {
             temp.ready++;
-            io.emit('ready', (userLogin));
+            io.emit('ready', (req.session.user.login));
               const readyPlayers = temp.ready;
-              if (readyPlayers === 1) {
+              if (readyPlayers === 2) {
                   io.emit('start-game');
               }
           }
@@ -190,7 +220,6 @@ app.post('/login', async (req, res) => {
     if (user) {
       req.session.loggedIn = true;
       req.session.user = user;
-      userLogin = user.login;
       res.sendFile(__dirname + '/views/main-menu.html');
     } else {
       res.status(401).json({ error: 'Unauthorized' });

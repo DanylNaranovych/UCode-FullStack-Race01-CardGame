@@ -2,6 +2,10 @@ const hand = document.querySelector(".hand");
 const enemyField = document.querySelector('.enemy-field');
 const tableField = document.querySelector(".my-field");
 
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get('roomId');
+let login = "123";
+
 const socket = io();
 
 let clickedCards = {
@@ -143,9 +147,14 @@ function handleCardClick(event) {
     console.log(clickedCards);
 
     if (clickedCards.my != null && clickedCards.enemy != null) {
-      // тут запрос на сервер
+      socket.emit('send-damage', clickedCards.my, clickedCards.enemy, login, roomId);
     }
 }
+
+socket.on('get-damage', (damage, cardId) => {
+  console.log("получил по ебалу");
+});
+
 
 // Add a click event listener to the document
 document.addEventListener("click", handleCardClick);
