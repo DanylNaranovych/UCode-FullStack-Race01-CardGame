@@ -88,6 +88,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+
 }
 
 .my-field {
@@ -171,7 +172,6 @@ body {
     font-size: 12px;
     border-radius: 3px;
     pointer-events: none;
-    /* Prevent stats from interfering with drag-and-drop */
 }
 
 .card:hover {
@@ -206,4 +206,24 @@ body {
 .glow {
     transform: scale(1.1);
     box-shadow: 0 0 50px 5px #d3009e;
+}
+
+.turn-ender {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: gray;
+    margin-left: 800px;
+}
+
+.timer {
+    background-color: pink;
+    width: 20px;
+    height: 20px;
+}
+
+.end-button {
+    background-color: red;
+    width: 20px;
+    height: 20px;
 }
