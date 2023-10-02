@@ -59,14 +59,19 @@ io.on('connection', (socket) => {
     const room = rooms.find((r) => r.name === roomId);
     let damaged;
     for (const player of room.players) {
-      if (player.name !== login) {
-          damaged = player.name;
+      if (player !== login) {
+          damaged = player;
       }
     }
 
-    if(req.session.user.login === damaged) {
-      socket.emit('get-damage', damage, cardId);
-    }
+    console.log(req.session.user);
+    console.log(`${damage}, ${cardId}, ${damaged}`);
+
+    io.emit('get-damage', damage, cardId, damaged);
+  });
+
+  socket.on("send-login", () => {
+    io.emit("get-login", (req.session.user.login));
   });
 
   socket.on('get-room', (roomid) => {
@@ -119,7 +124,7 @@ io.on('connection', (socket) => {
             io.emit('ready', (req.session.user.login));
               const readyPlayers = temp.ready;
               if (readyPlayers === 2) {
-                  io.emit('start-game', room.name);
+                  io.emit('start-game', room);
               }
           }
       }
@@ -168,6 +173,8 @@ app.get('/', (req, res) => {
 
 let db;
 const rooms = [];
+const players = [];
+
 
 async function initializeDatabase() {
   try {
