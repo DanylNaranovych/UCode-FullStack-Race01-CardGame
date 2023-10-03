@@ -117,15 +117,62 @@ io.on('connection', (socket) => {
               if (readyPlayers <= 2) {
                   socket.emit('start-game', room, req.session.user.login);
               }
+              if (readyPlayers == 2) {
+                setTimeout(() => io.emit("players-ready"), 5000);
+              }
           }
       }
   });
 
-  socket.on('get-card', () => {
+  socket.on("send-enemy", (sender, roomId) => {
+    const room = rooms.find((r) => r.name === roomId);
+    let enemy = null;
+
+    for (const player of room.players) {
+      if (player !== sender) {
+          enemy = player;
+      }
+    }
+
+    io.emit("get-enemy", enemy, sender);
+  });
+
+  socket.on("put-card", (enemyCardId, sender) => {
+    getEnemyCard(db, enemyCardId).then((enemyCard) => {
+      if (enemyCard) {
+        io.emit("load-enemy-card", enemyCard, sender);
+      }
+    });
+  });
+
+  async function getEnemyCard(db, enemyCardId) {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT * FROM ucode_web.cards WHERE id=${enemyCardId}`;
+      let card;
+      const values = [card];
+  
+      db.query(sql, values, (err, results) => {
+        if (err) {
+          console.error('Database error: ' + err);
+          reject(err);
+          return;
+        }
+  
+        if (results.length === 0) {
+          resolve(null);
+        } else {
+          const user = results[0];
+          resolve(user);
+        }
+      });
+    });
+  }
+
+  socket.on('get-card', (login) => {
     getRandomCard(db)
     .then((randomCard) => {
       if (randomCard) {
-        io.emit('randomCard', randomCard);
+        io.emit('randomCard', randomCard, login);
       }
     });
   });
