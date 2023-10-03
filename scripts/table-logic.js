@@ -8,9 +8,10 @@ const roomId = urlParams.get("roomId");
 const socket = io();
 
 let currentLogin = null;
-let clickedCards = {
-  my: null,
-  enemy: null,
+let currentSocketId = null;
+let sendDamage = {
+  damage: null,
+  enemyCard: null,
 };
 
 function createEnemyCard(card) {
@@ -109,15 +110,10 @@ for (let index = 0; index < 3; index++) {
 socket.on("randomCard", (randomCard) => {
   createCard(randomCard);
   createEnemyCard(randomCard);
+  console.log(`${socket.id}, ${roomId}`);
 });
 
-socket.emit("send-login");
-socket.on("get-login", login => {
-  currentLogin = login;
-  console.log("123");
-});
-
-console.log()
+console.log();
 // Add drop event listener to the table field
 tableField.addEventListener("dragover", handleDragOver);
 tableField.addEventListener("drop", handleDrop);
@@ -140,26 +136,32 @@ function handleCardClick(event) {
     card.classList.toggle("glow");
   }
 
-  const id = event.target.dataset.id;
-
   if (event.target.parentElement.className == "my-card") {
-    clickedCards.my = id;
+    const statsElementText = event.target.firstElementChild.textContent;
+    const attackIndexStart =
+      statsElementText.indexOf("Attack: ") + "Attack: ".length;
+    const attackIndexEnd = statsElementText.indexOf(",", attackIndexStart);
+    const attackValue = statsElementText.slice(
+      attackIndexStart,
+      attackIndexEnd
+    );
+    sendDamage.damage = attackValue;
   } else {
-    clickedCards.enemy = id;
+    sendDamage.enemyCard = event.target.dataset.id;
   }
 
-  if (clickedCards.my != null && clickedCards.enemy != null) {
+  if (sendDamage.damage != null && sendDamage.enemyCard != null) {
     socket.emit(
       "send-damage",
-      clickedCards.my,
-      clickedCards.enemy,
+      sendDamage,
+      // sendDamage.enemyCard,
       currentLogin,
       roomId
     );
   }
 }
 
-socket.on("get-damage", (damage, cardId, damaged) => {
+socket.on("get-damage", (damageInfo, damaged) => {
   console.log("asd");
   console.log(currentLogin);
   if (damaged == currentLogin) {
