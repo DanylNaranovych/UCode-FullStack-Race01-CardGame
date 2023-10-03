@@ -19,12 +19,6 @@ app.use(express.static('scripts'));
 app.use(express.static('avatars'));
 app.use(express.static('node_modules'));
 
-// app.use(session({
-//   secret: 'armagedon',
-//   resave: true,
-//   saveUninitialized: true,
-// }));
-
 const sessionMiddleware = session({
   secret: 'armagedon',
   resave: true,
@@ -123,8 +117,8 @@ io.on('connection', (socket) => {
             temp.ready++;
             io.emit('ready', (req.session.user.login));
               const readyPlayers = temp.ready;
-              if (readyPlayers === 2) {
-                  io.emit('start-game', room);
+              if (readyPlayers <= 2) {
+                  socket.emit('start-game', room, req.session.user.login);
               }
           }
       }
