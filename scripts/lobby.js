@@ -24,7 +24,7 @@ socket.on('send-players', (players) => {
   playerListContainer.innerHTML = '';
   players.forEach((player) => {
   const playerElement = document.createElement('div');
-  playerElement.textContent = player;
+  playerElement.textContent = player.name;
   playerListContainer.appendChild(playerElement);
 });
 });
@@ -48,6 +48,6 @@ socket.on('ready', (playerName) => {
 });
 
 
-socket.on('start-game', () => {
-  window.location.href = '/table.html';
+socket.on('start-game', (roomName) => {
+  window.location.href = `/table.html?roomId=${roomName}`;
 });
