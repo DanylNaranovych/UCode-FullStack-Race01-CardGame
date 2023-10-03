@@ -182,10 +182,47 @@ socket.on("players-ready", () => {
   });
 
   // Take damage
-  socket.on("get-damage", (damageInfo, damaged) => {
+  socket.on("get-damage", (damage, enemyCardId, damaged) => {
     if (damaged == currentLogin) {
-      console.log("отримав прочухана");
-      
+      // let cardElement = null;
+      // console.log(enemyField.children);
+      // for (child of enemyField.children) {
+      //   if (child.classList.contains("card")) {
+      //     cardElement = child.querySelector(`[data-id="${enemyCardId}"]`);
+      //     console.log("123");
+      //     console.log(child.querySelector(`[data-id="${enemyCardId}"]`));
+      //   }
+      // }
+    //   Array.from(enemyField.children).forEach(child => {
+    //     if (child.textContent) {
+    //       cardElement = child.querySelector(`[data-id="${enemyCardId}"]`);
+    //       console.log("adsd");
+    //       console.log(child.firstChild);
+    //       console.log(child.firstElementChild.querySelector(`[data-id="${enemyCardId}"]`));
+    //     }
+    //   });
+    //   console.log(damage);
+    //   console.log(enemyCardId);
+    //   console.log(damaged);
+    //   console.log(cardElement);
+    //   console.log(cardElement.firstElementChild);
+    //   const statsElementText = cardElement.firstElementChild.textContent;
+    //   const healthIndexStart =
+    //     statsElementText.indexOf("Health: ") + "Health: ".length;
+    //   const healthValue = statsElementText.slice(healthIndexStart);
+
+    //   const remainingHealth = healthValue - damage;
+
+    //   if (remainingHealth <= 0) {
+    //     cardElement.remove();
+    //   } else {
+    //     statsElementText.replace(
+    //       `Health: ${healthValue}`,
+    //       `Health: ${remainingHealth}`
+    //     );
+    //   }
+
+    //   console.log("отримав прочухана");
     }
   });
 

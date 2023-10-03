@@ -58,7 +58,8 @@ io.on('connection', (socket) => {
       }
     }
 
-    io.emit('get-damage', sendDamage, damaged);
+    // io.emit('get-damage', sendDamage, damaged);
+    io.emit('get-damage', sendDamage.damage, sendDamage.enemyCard, damaged);
   });
 
   socket.on("send-login", () => {
