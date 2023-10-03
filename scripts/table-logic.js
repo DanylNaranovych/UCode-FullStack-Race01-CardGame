@@ -4,15 +4,15 @@ const tableField = document.querySelector(".my-field");
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
+const currentLogin = urlParams.get("playerName");
 
-const socket = io();
-
-let currentLogin = null;
 let currentSocketId = null;
 let sendDamage = {
   damage: null,
   enemyCard: null,
 };
+
+const socket = io();
 
 function createEnemyCard(card) {
   const cardElement = document.createElement("div");
@@ -110,7 +110,6 @@ for (let index = 0; index < 3; index++) {
 socket.on("randomCard", (randomCard) => {
   createCard(randomCard);
   createEnemyCard(randomCard);
-  console.log(`${socket.id}, ${roomId}`);
 });
 
 console.log();
@@ -162,12 +161,12 @@ function handleCardClick(event) {
 }
 
 socket.on("get-damage", (damageInfo, damaged) => {
-  console.log("asd");
-  console.log(currentLogin);
   if (damaged == currentLogin) {
-    console.log("получил по ебалу");
+    console.log("отримав прочухана");
   }
 });
 
 // Add a click event listener to the document
-document.addEventListener("click", handleCardClick);
+// document.addEventListener("click", handleCardClick);
+enemyField.addEventListener("click", handleCardClick);
+tableField.addEventListener("click", handleCardClick);

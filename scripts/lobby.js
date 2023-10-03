@@ -24,7 +24,7 @@ socket.on('send-players', (players) => {
   playerListContainer.innerHTML = '';
   players.forEach((player) => {
   const playerElement = document.createElement('div');
-  playerElement.textContent = player.name;
+  playerElement.textContent = player;
   playerListContainer.appendChild(playerElement);
 });
 });

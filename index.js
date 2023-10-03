@@ -41,27 +41,24 @@ io.on('connection', (socket) => {
     const room = {
         name: roomName,
         creator: req.session.user.login,
-        players: [{ name:req.session.user.login, id: socket.id}],
+        players: [req.session.user.login],
         ready: 0,
     };
     rooms.push(room);
     socket.emit('room-created', room);
   });
 
-  socket.on('send-damage', (damage, cardId, login, roomId) => {
-    console.log("check");
+  socket.on('send-damage', (sendDamage, login, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
     let damaged;
+
     for (const player of room.players) {
       if (player !== login) {
           damaged = player;
       }
     }
 
-    console.log(req.session.user);
-    console.log(`${damage}, ${cardId}, ${damaged}`);
-
-    io.emit('get-damage', damage, cardId, damaged);
+    io.emit('get-damage', sendDamage, damaged);
   });
 
   socket.on("send-login", () => {
@@ -84,7 +81,7 @@ io.on('connection', (socket) => {
     socket.on('join-room', (roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
-            room.players.push({ name:req.session.user.login, id: socket.id });
+            room.players.push(req.session.user.login);
             socket.join(roomName);
 
             io.emit('room-created', room);
@@ -108,7 +105,7 @@ io.on('connection', (socket) => {
       if (temp) {
         let playerFound = false;
           for (const player of temp.players) {
-            if (player.name === req.session.user.login) {
+            if (player === req.session.user.login) {
                 playerFound = true;
                 break;
             }
