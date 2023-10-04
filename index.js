@@ -16,8 +16,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(express.static('views'));
 app.use(express.static('scripts'));
-app.use(express.static('avatars'));
+app.use('/avatars', express.static('avatars'));
 app.use(express.static('node_modules'));
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'avatars/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 
 const sessionMiddleware = session({
   secret: 'armagedon',
@@ -60,6 +74,10 @@ io.on('connection', (socket) => {
 
     // io.emit('get-damage', sendDamage, damaged);
     io.emit('get-damage', sendDamage.damage, sendDamage.enemyCard, damaged);
+  });
+
+  socket.on("send-enemy-card-damaged", (damage, damagedCardId, damagedPlayer) => {
+    io.emit("get-enemy-card-damaged", damage, damagedCardId, damagedPlayer);
   });
 
   socket.on("send-login", () => {
@@ -204,7 +222,22 @@ io.on('connection', (socket) => {
   socket.on("first-step", (roomId) => {
     const room = rooms.find((r) => r.name === roomId);
     const randomIndex = Math.floor(Math.random() * 2);
-    socket.emit("first-step-result", room.players[randomIndex]);
+    io.emit("first-step-result", room.players[randomIndex]);
+  });
+
+  socket.on("start-game", () => {
+    let mana = 2;
+    socket.emit('game-started', mana);
+  });
+
+  socket.on('start-turn-timer', (secconds, roomId) => {
+    const room = rooms.find((r) => r.name === roomId);
+    console.log("ajfdsgjhks");
+    setTimeout(() => {
+      room.players.forEach(player => {
+        io.emit("turn-timeout", player);
+      });
+    }, secconds * 1000);
   });
 
   socket.on('disconnect', () => {
@@ -347,6 +380,22 @@ app.get('/user-info', (req, res) => {
 app.get('/lobby', (req, res) => {
   res.sendFile(__dirname + '/views/lobby.html');
 });
+
+app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
+  const username = req.session.user.login; 
+  const avatarPath = req.file.path;
+  const updateQuery = 'UPDATE ucode_web.users SET avatar_path = ? WHERE login = ?';
+
+  db.query(updateQuery, [avatarPath, username], (err, result) => {
+    if (err) {
+      console.error('Ошибка при обновлении аватара в базе данных', err);
+      return res.status(500).json({ message: 'Ошибка при обновлении аватара' });
+    }
+
+    res.sendFile(__dirname + '/views/main-menu.html');
+  });
+});
+
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000');

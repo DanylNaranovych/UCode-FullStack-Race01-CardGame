@@ -13,3 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 });
+
+function openAvatarPanel() {
+    const avatarPanel = document.getElementById('avatar-panel');
+    avatarPanel.style.display = 'block';
+}
+
+function closeAvatarPanel() {
+    const avatarPanel = document.getElementById('avatar-panel');
+    avatarPanel.style.display = 'none';
+}
