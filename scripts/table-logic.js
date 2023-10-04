@@ -4,14 +4,16 @@ const tableField = document.querySelector(".my-field");
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
+const currentLogin = urlParams.get("playerName");
+
+let currentEnemy = null;
+let currentSocketId = null;
+let sendDamage = {
+  damage: null,
+  enemyCard: null,
+};
 
 const socket = io();
-
-let currentLogin = null;
-let clickedCards = {
-  my: null,
-  enemy: null,
-};
 
 function createEnemyCard(card) {
   const cardElement = document.createElement("div");
@@ -80,7 +82,7 @@ function handleDragOver(event) {
 function handleDrop(event) {
   event.preventDefault();
   const cardId = event.dataTransfer.getData("text/plain");
-  const cardElement = document.querySelector(`[data-id="${cardId}"]`);
+  const cardElement = hand.querySelector(`[data-id="${cardId}"]`);
 
   // Check if the card is dropped onto a card placeholder
   if (event.target.classList.contains("my-card")) {
@@ -99,28 +101,10 @@ function handleDrop(event) {
 
     // Remove the card from the hand
     cardElement.remove();
+
+    socket.emit("put-card", cardId, currentLogin);
   }
 }
-
-// Start battle
-for (let index = 0; index < 3; index++) {
-  socket.emit("get-card");
-}
-socket.on("randomCard", (randomCard) => {
-  createCard(randomCard);
-  createEnemyCard(randomCard);
-});
-
-socket.emit("send-login");
-socket.on("get-login", login => {
-  currentLogin = login;
-  console.log("123");
-});
-
-console.log()
-// Add drop event listener to the table field
-tableField.addEventListener("dragover", handleDragOver);
-tableField.addEventListener("drop", handleDrop);
 
 // Function to handle card click event
 function handleCardClick(event) {
@@ -140,32 +124,113 @@ function handleCardClick(event) {
     card.classList.toggle("glow");
   }
 
-  const id = event.target.dataset.id;
-
   if (event.target.parentElement.className == "my-card") {
-    clickedCards.my = id;
+    const statsElementText = event.target.firstElementChild.textContent;
+    const attackIndexStart =
+      statsElementText.indexOf("Attack: ") + "Attack: ".length;
+    const attackIndexEnd = statsElementText.indexOf(",", attackIndexStart);
+    const attackValue = statsElementText.slice(
+      attackIndexStart,
+      attackIndexEnd
+    );
+    sendDamage.damage = attackValue;
   } else {
-    clickedCards.enemy = id;
+    sendDamage.enemyCard = event.target.dataset.id;
   }
 
-  if (clickedCards.my != null && clickedCards.enemy != null) {
+  if (sendDamage.damage != null && sendDamage.enemyCard != null) {
     socket.emit(
       "send-damage",
-      clickedCards.my,
-      clickedCards.enemy,
+      sendDamage,
+      // sendDamage.enemyCard,
       currentLogin,
       roomId
     );
   }
 }
 
-socket.on("get-damage", (damage, cardId, damaged) => {
-  console.log("asd");
-  console.log(currentLogin);
-  if (damaged == currentLogin) {
-    console.log("получил по ебалу");
-  }
-});
+// Waitng for enemy
+socket.on("players-ready", () => {
+  // Start battle
+  // Load enemy
+  socket.emit("send-enemy", currentLogin, roomId);
 
-// Add a click event listener to the document
-document.addEventListener("click", handleCardClick);
+  socket.on("get-enemy", (enemy, sender) => {
+    if (sender == currentLogin) {
+      currentEnemy = enemy;
+      console.log(`${currentEnemy}, ${enemy}`);
+    }
+  });
+
+  // Generate your cards
+  for (let index = 0; index < 3; index++) {
+    socket.emit("get-card", currentLogin);
+  }
+
+  // Load yuor card
+  socket.on("randomCard", (randomCard, login) => {
+    if (login == currentLogin) {
+      createCard(randomCard);
+    }
+  });
+
+  // Load enemy card
+  socket.on("load-enemy-card", (enemyCard, sender) => {
+    if (currentLogin != sender) {
+      createEnemyCard(enemyCard);
+    }
+  });
+
+  // Take damage
+  socket.on("get-damage", (damage, enemyCardId, damaged) => {
+    if (damaged == currentLogin) {
+      // let cardElement = null;
+      // console.log(enemyField.children);
+      // for (child of enemyField.children) {
+      //   if (child.classList.contains("card")) {
+      //     cardElement = child.querySelector(`[data-id="${enemyCardId}"]`);
+      //     console.log("123");
+      //     console.log(child.querySelector(`[data-id="${enemyCardId}"]`));
+      //   }
+      // }
+    //   Array.from(enemyField.children).forEach(child => {
+    //     if (child.textContent) {
+    //       cardElement = child.querySelector(`[data-id="${enemyCardId}"]`);
+    //       console.log("adsd");
+    //       console.log(child.firstChild);
+    //       console.log(child.firstElementChild.querySelector(`[data-id="${enemyCardId}"]`));
+    //     }
+    //   });
+    //   console.log(damage);
+    //   console.log(enemyCardId);
+    //   console.log(damaged);
+    //   console.log(cardElement);
+    //   console.log(cardElement.firstElementChild);
+    //   const statsElementText = cardElement.firstElementChild.textContent;
+    //   const healthIndexStart =
+    //     statsElementText.indexOf("Health: ") + "Health: ".length;
+    //   const healthValue = statsElementText.slice(healthIndexStart);
+
+    //   const remainingHealth = healthValue - damage;
+
+    //   if (remainingHealth <= 0) {
+    //     cardElement.remove();
+    //   } else {
+    //     statsElementText.replace(
+    //       `Health: ${healthValue}`,
+    //       `Health: ${remainingHealth}`
+    //     );
+    //   }
+
+    //   console.log("отримав прочухана");
+    }
+  });
+
+  // Add drop event listener to the table field
+  tableField.addEventListener("dragover", handleDragOver);
+  tableField.addEventListener("drop", handleDrop);
+
+  // Add a click event listener to the document
+  enemyField.addEventListener("click", handleCardClick);
+  tableField.addEventListener("click", handleCardClick);
+});

@@ -19,12 +19,6 @@ app.use(express.static('scripts'));
 app.use(express.static('avatars'));
 app.use(express.static('node_modules'));
 
-// app.use(session({
-//   secret: 'armagedon',
-//   resave: true,
-//   saveUninitialized: true,
-// }));
-
 const sessionMiddleware = session({
   secret: 'armagedon',
   resave: true,
@@ -47,27 +41,25 @@ io.on('connection', (socket) => {
     const room = {
         name: roomName,
         creator: req.session.user.login,
-        players: [{ name:req.session.user.login, id: socket.id}],
+        players: [req.session.user.login],
         ready: 0,
     };
     rooms.push(room);
     socket.emit('room-created', room);
   });
 
-  socket.on('send-damage', (damage, cardId, login, roomId) => {
-    console.log("check");
+  socket.on('send-damage', (sendDamage, login, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
     let damaged;
+
     for (const player of room.players) {
       if (player !== login) {
           damaged = player;
       }
     }
 
-    console.log(req.session.user);
-    console.log(`${damage}, ${cardId}, ${damaged}`);
-
-    io.emit('get-damage', damage, cardId, damaged);
+    // io.emit('get-damage', sendDamage, damaged);
+    io.emit('get-damage', sendDamage.damage, sendDamage.enemyCard, damaged);
   });
 
   socket.on("send-login", () => {
@@ -90,7 +82,7 @@ io.on('connection', (socket) => {
     socket.on('join-room', (roomName) => {
         const room = rooms.find((r) => r.name === roomName);
         if (room) {
-            room.players.push({ name:req.session.user.login, id: socket.id });
+            room.players.push(req.session.user.login);
             socket.join(roomName);
 
             io.emit('room-created', room);
@@ -114,7 +106,7 @@ io.on('connection', (socket) => {
       if (temp) {
         let playerFound = false;
           for (const player of temp.players) {
-            if (player.name === req.session.user.login) {
+            if (player === req.session.user.login) {
                 playerFound = true;
                 break;
             }
@@ -123,18 +115,65 @@ io.on('connection', (socket) => {
             temp.ready++;
             io.emit('ready', (req.session.user.login));
               const readyPlayers = temp.ready;
-              if (readyPlayers === 2) {
-                  io.emit('start-game', room);
+              if (readyPlayers <= 2) {
+                  socket.emit('start-game', room, req.session.user.login);
+              }
+              if (readyPlayers == 2) {
+                setTimeout(() => io.emit("players-ready"), 5000);
               }
           }
       }
   });
 
-  socket.on('get-card', () => {
+  socket.on("send-enemy", (sender, roomId) => {
+    const room = rooms.find((r) => r.name === roomId);
+    let enemy = null;
+
+    for (const player of room.players) {
+      if (player !== sender) {
+          enemy = player;
+      }
+    }
+
+    io.emit("get-enemy", enemy, sender);
+  });
+
+  socket.on("put-card", (enemyCardId, sender) => {
+    getEnemyCard(db, enemyCardId).then((enemyCard) => {
+      if (enemyCard) {
+        io.emit("load-enemy-card", enemyCard, sender);
+      }
+    });
+  });
+
+  async function getEnemyCard(db, enemyCardId) {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT * FROM ucode_web.cards WHERE id=${enemyCardId}`;
+      let card;
+      const values = [card];
+  
+      db.query(sql, values, (err, results) => {
+        if (err) {
+          console.error('Database error: ' + err);
+          reject(err);
+          return;
+        }
+  
+        if (results.length === 0) {
+          resolve(null);
+        } else {
+          const user = results[0];
+          resolve(user);
+        }
+      });
+    });
+  }
+
+  socket.on('get-card', (login) => {
     getRandomCard(db)
     .then((randomCard) => {
       if (randomCard) {
-        io.emit('randomCard', randomCard);
+        io.emit('randomCard', randomCard, login);
       }
     });
   });
