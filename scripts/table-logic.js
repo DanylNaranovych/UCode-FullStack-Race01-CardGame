@@ -36,6 +36,7 @@ function createEnemyCard(card) {
   cardElement.className = "card";
   cardElement.draggable = true;
   cardElement.textContent = card.name;
+  cardElement.style.backgroundImage = `url(avatar/${card.avatar_path})`;
 
   // Create a stats container
   const statsElement = document.createElement("div");
@@ -68,6 +69,7 @@ function createCard(card) {
   cardElement.className = "card";
   cardElement.draggable = true;
   cardElement.textContent = card.name;
+  cardElement.style.backgroundImage = `url(avatar/${card.avatar_path})`;
 
   // Create a stats container
   const statsElement = document.createElement("div");
