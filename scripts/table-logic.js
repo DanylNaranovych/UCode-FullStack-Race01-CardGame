@@ -1,4 +1,6 @@
 const hand = document.querySelector(".hand");
+const enemyHead = document.querySelector(".enemy-head");
+const myHead = document.querySelector(".my-head");
 const enemyField = document.querySelector(".enemy-field");
 const tableField = document.querySelector(".my-field");
 
@@ -6,6 +8,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
 const currentLogin = urlParams.get("playerName");
 
+let countCardsInHand = 0;
 let isPlayerAllowedToInteract = false;
 let currentMana = null;
 let maxMana = null;
@@ -21,14 +24,11 @@ const socket = io();
 
 function getCardPrice(card) {
   const statsElementText = card.firstElementChild.textContent;
-    const priceIndexStart =
-      statsElementText.indexOf("price: ") + "price: ".length;
-    const priceIndexEnd = statsElementText.indexOf(",", priceIndexStart);
-    const priceValue = statsElementText.slice(
-      priceIndexStart,
-      priceIndexEnd
-    );
-    return priceValue;
+  const priceIndexStart =
+    statsElementText.indexOf("price: ") + "price: ".length;
+  const priceIndexEnd = statsElementText.indexOf(",", priceIndexStart);
+  const priceValue = statsElementText.slice(priceIndexStart, priceIndexEnd);
+  return priceValue;
 }
 
 function createEnemyCard(card) {
@@ -60,6 +60,10 @@ function createEnemyCard(card) {
 
 // Function to create a card element with stats
 function createCard(card) {
+  if (countCardsInHand >= 7) {
+    return;
+  }
+
   const cardElement = document.createElement("div");
   cardElement.className = "card";
   cardElement.draggable = true;
@@ -129,7 +133,9 @@ function handleDrop(event) {
       this.style.transform = "scale(1)";
     });
 
-    currentMana -= Number.parseInt(getCardPrice(event.target.firstElementChild));
+    currentMana -= Number.parseInt(
+      getCardPrice(event.target.firstElementChild)
+    );
     console.log(currentMana);
 
     // Remove the card from the hand
@@ -260,14 +266,14 @@ socket.on("players-ready", () => {
       isPlayerAllowedToInteract = true;
     }
 
-    console.log(`${isPlayerAllowedToInteract} dolboyob is ${currentLogin}`);
-
     if (maxMana <= 10) {
       maxMana++;
     }
     currentMana = maxMana;
-    if (isPlayerAllowedToInteract == true) {
+    if (isPlayerAllowedToInteract) {
       socket.emit("start-turn-timer", 10, roomId);
+
+      socket.emit("get-card", currentLogin);
     }
   });
 
@@ -377,6 +383,31 @@ socket.on("players-ready", () => {
     }
   );
 
+  socket.on("get-player-damage", (sender, damage) => {
+    if (sender == currentLogin) {
+      return;
+    }
+
+    const head = myHead.parentElement;
+    const myHp = head.children[1].textContent;
+    const remainingHp = myHp - damage;
+    if (remainingHp <= 0) {
+      // proebal
+    } else {
+      head.children[1].textContent = remainingHp;
+      socket.emit("send-remainig-hp", remainingHp, currentLogin);
+    }
+  });
+
+  socket.on("get-remainig-hp", (remainingHp, sender) => {
+    if (sender == currentLogin) {
+      return;
+    }
+
+    const head = enemyHead.parentElement;
+    head.children[1].textContent = remainingHp;
+  });
+
   // Add drop event listener to the table field
   tableField.addEventListener("dragover", handleDragOver);
   tableField.addEventListener("drop", handleDrop);
@@ -384,4 +415,13 @@ socket.on("players-ready", () => {
   // Add a click event listener to the document
   enemyField.addEventListener("click", handleCardClick);
   tableField.addEventListener("click", handleCardClick);
+  enemyHead.addEventListener("click", (event) => {
+    if (sendDamage.damage) {
+      // const head = event.target.parentElement;
+      // const enemyHp = head.children[1].textContent;
+
+      socket.emit("send-player-damage", currentLogin, sendDamage.damage);
+      sendDamage.damage = null;
+    }
+  });
 });

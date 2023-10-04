@@ -76,6 +76,14 @@ io.on('connection', (socket) => {
     io.emit('get-damage', sendDamage.damage, sendDamage.enemyCard, damaged);
   });
 
+  socket.on("send-player-damage", (sender, damage) => {
+    io.emit("get-player-damage", sender, damage);
+  });
+
+  socket.on("send-remainig-hp", (remainingHp, sender) => {
+    io.emit("get-remainig-hp", remainingHp, sender);
+  });
+
   socket.on("send-enemy-card-damaged", (damage, damagedCardId, damagedPlayer) => {
     io.emit("get-enemy-card-damaged", damage, damagedCardId, damagedPlayer);
   });
@@ -232,7 +240,6 @@ io.on('connection', (socket) => {
 
   socket.on('start-turn-timer', (secconds, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
-    console.log("ajfdsgjhks");
     setTimeout(() => {
       room.players.forEach(player => {
         io.emit("turn-timeout", player);
