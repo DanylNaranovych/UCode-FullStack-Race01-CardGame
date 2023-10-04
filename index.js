@@ -213,32 +213,8 @@ io.on('connection', (socket) => {
 
   socket.on("start-game", () => {
     let mana = 2;
-    io.emit('game-started', mana);
+    socket.emit('game-started', mana);
   });
-
-  let turnTimer;
-
-// Обработчик для запуска таймера
-  // socket.on('start-turn-timer', (durationInSeconds) => {
-  //   let timeLeft = durationInSeconds;
-
-  //   // Отправить оставшееся время клиентам
-  //   io.emit('update-turn-timer', timeLeft);
-
-  //   // Запустить таймер, уменьшающий оставшееся время каждую секунду
-  //   turnTimer = setInterval(() => {
-  //   timeLeft -= 1000;
-  //   io.emit('update-turn-timer', timeLeft);
-    
-    
-  //   if (timeLeft <= 0) {
-  //     console.log(timeLeft);
-  //       // Время хода истекло
-  //       clearInterval(turnTimer);
-  //       io.emit('turn-timeout'); // Уведомить всех клиентов об истечении времени хода
-  //     }
-  //   }, 1000);
-  // });
 
   socket.on('start-turn-timer', (secconds, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
