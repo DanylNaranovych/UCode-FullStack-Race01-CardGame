@@ -16,8 +16,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(express.static('views'));
 app.use(express.static('scripts'));
-app.use(express.static('avatars'));
+app.use('/avatars', express.static('avatars'));
 app.use(express.static('node_modules'));
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'avatars/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 
 const sessionMiddleware = session({
   secret: 'armagedon',
@@ -366,6 +380,22 @@ app.get('/user-info', (req, res) => {
 app.get('/lobby', (req, res) => {
   res.sendFile(__dirname + '/views/lobby.html');
 });
+
+app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
+  const username = req.session.user.login; 
+  const avatarPath = req.file.path;
+  const updateQuery = 'UPDATE ucode_web.users SET avatar_path = ? WHERE login = ?';
+
+  db.query(updateQuery, [avatarPath, username], (err, result) => {
+    if (err) {
+      console.error('Ошибка при обновлении аватара в базе данных', err);
+      return res.status(500).json({ message: 'Ошибка при обновлении аватара' });
+    }
+
+    res.sendFile(__dirname + '/views/main-menu.html');
+  });
+});
+
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000');

@@ -180,3 +180,67 @@ h2 {
 #room-list-container li button:hover {
     background-color: #c9302c;
 }
+
+/* Стили для панели смены аватара */
+.avatar-panel {
+    display: none;
+    text-align: center;
+    background-color: #333; /* Цвет фона панели */
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-panel h2 {
+    font-size: 24px;
+    color: #fff; /* Цвет текста */
+    margin-bottom: 10px;
+}
+
+.avatar-panel form {
+    margin-top: 20px;
+}
+.avatar-panel label {
+    display: block;
+    background-color: #007bff; /* Цвет фона кнопки "Choose File" */
+    color: #fff; /* Цвет текста кнопки "Choose File" */
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.avatar-panel label:hover {
+    background-color: #0056b3; /* Цвет фона кнопки "Choose File" при наведении */
+}
+
+.avatar-panel input[type="submit"] {
+    background-color: #d9534f; /* Цвет фона кнопки "Сохранить" */
+    color: #fff; /* Цвет текста кнопки "Сохранить" */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.avatar-panel input[type="submit"]:hover {
+    background-color: #c9302c; /* Цвет фона кнопки "Сохранить" при наведении */
+}
+
+.avatar-panel button {
+    background-color: #555; /* Цвет фона кнопки "Cancel" */
+    color: #fff; /* Цвет текста кнопки "Cancel" */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.avatar-panel button:hover {
+    background-color: #333; /* Цвет фона кнопки "Cancel" при наведении */
+}

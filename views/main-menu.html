@@ -11,7 +11,17 @@
     <div class="container">
         <h1>Menu</h1>
         <div id="user-info">
-            <img src="baza.png" alt="User Avatar" id="user-avatar">
+            <div class="avatar-container">
+                <img src="baza.png" alt="User Avatar" id="user-avatar" onclick="openAvatarPanel()">
+            </div>
+            <div class="avatar-panel" id="avatar-panel">
+                <h2>Change avatar.</h2>
+                <form action="/upload-avatar" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="avatar" accept="image/*">
+                    <input type="submit" value="Сохранить">
+                </form>
+                <button onclick="closeAvatarPanel()">Cancel</button>
+            </div>
             <span id="user-name">Undefined</span>
             <a href="/logout" id="logout-link">Logout</a>
         </div>
