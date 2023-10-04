@@ -74,7 +74,7 @@ function createCard(card) {
 
 // Function to handle drag start event
 function handleDragStart(event) {
-  if(!isPlayerAllowedToInteract){
+  if (!isPlayerAllowedToInteract) {
     return;
   }
   event.dataTransfer.setData("text/plain", event.target.dataset.id);
@@ -82,7 +82,7 @@ function handleDragStart(event) {
 
 // Function to handle drag over event
 function handleDragOver(event) {
-  if(!isPlayerAllowedToInteract){
+  if (!isPlayerAllowedToInteract) {
     return;
   }
   event.preventDefault();
@@ -90,7 +90,7 @@ function handleDragOver(event) {
 
 // Function to handle drop event
 function handleDrop(event) {
-  if(!isPlayerAllowedToInteract){
+  if (!isPlayerAllowedToInteract) {
     return;
   }
   event.preventDefault();
@@ -121,14 +121,15 @@ function handleDrop(event) {
 
 // Function to handle card click event
 function handleCardClick(event) {
-  if(!isPlayerAllowedToInteract){
+  if (!isPlayerAllowedToInteract) {
     return;
   }
 
   const card = event.target;
 
-  if (card.classList.contains("card") 
-      && card.parentElement.classList.contains("my-card")
+  if (
+    card.classList.contains("card") &&
+    card.parentElement.classList.contains("my-card")
   ) {
     // Remove the "glow" class from all cards in the "my-card" container
     const myCards = document.querySelectorAll(".my-card .card");
@@ -167,13 +168,13 @@ function handleCardClick(event) {
   }
 }
 
-async function getfirstplayer(socket, roomId) {
+function getfirstplayer(socket, roomId) {
   try {
     // Отправляем событие "first-step" на сервер с указанием roomId
     socket.emit("first-step", roomId);
 
     // Ожидаем ответа от сервера через событие "first-step-result"
-    const firstMove = await new Promise((resolve, reject) => {
+    const firstMove = new Promise((resolve, reject) => {
       socket.on("first-step-result", (player) => {
         resolve(player);
       });
@@ -206,32 +207,38 @@ socket.on("players-ready", () => {
 
   getfirstplayer(socket, roomId).then((firstMove) => {
     console.log("Первый ходит игрок:", firstMove);
-    if(currentLogin == firstMove) {
+    if (currentLogin == firstMove) {
       isPlayerAllowedToInteract = true;
     }
   });
 
   socket.emit("start-game");
 
-  socket.on('game-started', (mana) => {
-    if(isPlayerAllowedToInteract) {
+  socket.on("game-started", (mana) => {
+    if (isPlayerAllowedToInteract) {
       maxMana = mana;
       currentMana = maxMana;
       console.log(`${currentLogin}'s move now`);
       console.log(`Mana:${mana}`);
 
-      io.emit('start-turn-timer', 10);
+      socket.emit("start-turn-timer", 30);
     } else {
       console.log("Not your move");
     }
   });
 
-  socket.on('turn-timeout', () => {
+  socket.on("turn-timeout", () => {
     console.log("Time is over.");
-    isPlayerAllowedToInteract++;
+    if (isPlayerAllowedToInteract) {
+      isPlayerAllowedToInteract = false;
+    } else {
+      isPlayerAllowedToInteract = true;
+    }
     maxMana++;
     currentMana = maxMana;
-    io.emit('start-turn-timer', 10);
+    if (isPlayerAllowedToInteract) {
+      socket.emit("start-turn-timer", 30);
+    }
   });
 
   // Load yuor card
