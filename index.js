@@ -62,6 +62,10 @@ io.on('connection', (socket) => {
     io.emit('get-damage', sendDamage.damage, sendDamage.enemyCard, damaged);
   });
 
+  socket.on("send-enemy-card-damaged", (damage, damagedCardId, damagedPlayer) => {
+    io.emit("get-enemy-card-damaged", damage, damagedCardId, damagedPlayer);
+  });
+
   socket.on("send-login", () => {
     io.emit("get-login", (req.session.user.login));
   });
