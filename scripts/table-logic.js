@@ -19,6 +19,18 @@ let sendDamage = {
 
 const socket = io();
 
+function getCardPrice(card) {
+  const statsElementText = card.firstElementChild.textContent;
+    const priceIndexStart =
+      statsElementText.indexOf("price: ") + "price: ".length;
+    const priceIndexEnd = statsElementText.indexOf(",", priceIndexStart);
+    const priceValue = statsElementText.slice(
+      priceIndexStart,
+      priceIndexEnd
+    );
+    return priceValue;
+}
+
 function createEnemyCard(card) {
   const cardElement = document.createElement("div");
   cardElement.className = "card";
@@ -75,6 +87,11 @@ function createCard(card) {
 // Function to handle drag start event
 function handleDragStart(event) {
   if (!isPlayerAllowedToInteract) {
+    alert("Not your turn yet!");
+    return;
+  }
+  if (currentMana < getCardPrice(event.target)) {
+    alert("It's too expensive for you know :(");
     return;
   }
   event.dataTransfer.setData("text/plain", event.target.dataset.id);
@@ -112,6 +129,9 @@ function handleDrop(event) {
       this.style.transform = "scale(1)";
     });
 
+    currentMana -= Number.parseInt(getCardPrice(event.target.firstElementChild));
+    console.log(currentMana);
+
     // Remove the card from the hand
     cardElement.remove();
 
@@ -122,6 +142,7 @@ function handleDrop(event) {
 // Function to handle card click event
 function handleCardClick(event) {
   if (!isPlayerAllowedToInteract) {
+    alert("Not your turn yet!");
     return;
   }
 
@@ -215,29 +236,38 @@ socket.on("players-ready", () => {
   socket.emit("start-game");
 
   socket.on("game-started", (mana) => {
+    maxMana = mana;
+    currentMana = maxMana;
+    console.log(`Mana:${mana}`);
     if (isPlayerAllowedToInteract) {
-      maxMana = mana;
-      currentMana = maxMana;
       console.log(`${currentLogin}'s move now`);
-      console.log(`Mana:${mana}`);
 
-      socket.emit("start-turn-timer", 30);
+      socket.emit("start-turn-timer", 10, roomId);
     } else {
       console.log("Not your move");
     }
   });
 
-  socket.on("turn-timeout", () => {
+  socket.on("turn-timeout", (receiver) => {
+    if (receiver != currentLogin) {
+      return;
+    }
+
     console.log("Time is over.");
     if (isPlayerAllowedToInteract) {
       isPlayerAllowedToInteract = false;
     } else {
       isPlayerAllowedToInteract = true;
     }
-    maxMana++;
+
+    console.log(`${isPlayerAllowedToInteract} dolboyob is ${currentLogin}`);
+
+    if (maxMana <= 10) {
+      maxMana++;
+    }
     currentMana = maxMana;
-    if (isPlayerAllowedToInteract) {
-      socket.emit("start-turn-timer", 30);
+    if (isPlayerAllowedToInteract == true) {
+      socket.emit("start-turn-timer", 10, roomId);
     }
   });
 

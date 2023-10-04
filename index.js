@@ -208,7 +208,7 @@ io.on('connection', (socket) => {
   socket.on("first-step", (roomId) => {
     const room = rooms.find((r) => r.name === roomId);
     const randomIndex = Math.floor(Math.random() * 2);
-    socket.emit("first-step-result", room.players[randomIndex]);
+    io.emit("first-step-result", room.players[randomIndex]);
   });
 
   socket.on("start-game", () => {
@@ -240,8 +240,14 @@ io.on('connection', (socket) => {
   //   }, 1000);
   // });
 
-  socket.on('start-turn-timer', (secconds) => {
-    setTimeout(() => {io.emit("turn-timeout");}, secconds * 1000);
+  socket.on('start-turn-timer', (secconds, roomId) => {
+    const room = rooms.find((r) => r.name === roomId);
+    console.log("ajfdsgjhks");
+    setTimeout(() => {
+      room.players.forEach(player => {
+        io.emit("turn-timeout", player);
+      });
+    }, secconds * 1000);
   });
 
   socket.on('disconnect', () => {
