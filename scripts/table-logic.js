@@ -6,6 +6,10 @@ const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
 const currentLogin = urlParams.get("playerName");
 
+let isPlayerAllowedToInteract = false;
+let currentMana = null;
+let maxMana = null;
+
 let currentEnemy = null;
 let currentSocketId = null;
 let sendDamage = {
@@ -70,16 +74,25 @@ function createCard(card) {
 
 // Function to handle drag start event
 function handleDragStart(event) {
+  if(!isPlayerAllowedToInteract){
+    return;
+  }
   event.dataTransfer.setData("text/plain", event.target.dataset.id);
 }
 
 // Function to handle drag over event
 function handleDragOver(event) {
+  if(!isPlayerAllowedToInteract){
+    return;
+  }
   event.preventDefault();
 }
 
 // Function to handle drop event
 function handleDrop(event) {
+  if(!isPlayerAllowedToInteract){
+    return;
+  }
   event.preventDefault();
   const cardId = event.dataTransfer.getData("text/plain");
   const cardElement = hand.querySelector(`[data-id="${cardId}"]`);
@@ -108,11 +121,14 @@ function handleDrop(event) {
 
 // Function to handle card click event
 function handleCardClick(event) {
+  if(!isPlayerAllowedToInteract){
+    return;
+  }
+
   const card = event.target;
 
-  if (
-    card.classList.contains("card") &&
-    card.parentElement.classList.contains("my-card")
+  if (card.classList.contains("card") 
+      && card.parentElement.classList.contains("my-card")
   ) {
     // Remove the "glow" class from all cards in the "my-card" container
     const myCards = document.querySelectorAll(".my-card .card");
@@ -190,9 +206,33 @@ socket.on("players-ready", () => {
   getfirstplayer(socket, roomId)
   .then((firstMove) => {
     console.log("Первый ходит игрок:", firstMove);
+    if(currentLogin == firstMove) {
+      isPlayerAllowedToInteract = true;
+    }
   });
 
   socket.emit('start-game');
+
+  socket.on('game-started', (mana) => {
+    if(isPlayerAllowedToInteract) {
+      maxMana = mana;
+      currentMana = maxMana;
+      console.log(`${currentLogin}'s move now`);
+      console.log(`Mana:${mana}`);
+
+      io.emit('start-turn-timer', 10);
+    } else {
+      console.log("Not your move");
+    }
+  });
+
+  socket.on('turn-timeout', () => {
+    console.log("Time is over.");
+    isPlayerAllowedToInteract++;
+    maxMana++;
+    currentMana = maxMana;
+    io.emit('start-turn-timer', 10);
+  });
 
   // Load yuor card
   socket.on("randomCard", (randomCard, login) => {

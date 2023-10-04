@@ -207,6 +207,33 @@ io.on('connection', (socket) => {
     socket.emit("first-step-result", room.players[randomIndex]);
   });
 
+  socket.on("start-game", () => {
+    let mana = 2;
+    io.emit('game-started', mana);
+  });
+
+  let turnTimer;
+
+// Обработчик для запуска таймера
+  socket.on('start-turn-timer', (durationInSeconds) => {
+    let timeLeft = durationInSeconds;
+
+    // Отправить оставшееся время клиентам
+    io.emit('update-turn-timer', timeLeft);
+
+    // Запустить таймер, уменьшающий оставшееся время каждую секунду
+    turnTimer = setInterval(() => {
+    timeLeft--;
+    io.emit('update-turn-timer', timeLeft);
+
+    if (timeLeft <= 0) {
+        // Время хода истекло
+        clearInterval(turnTimer);
+        io.emit('turn-timeout'); // Уведомить всех клиентов об истечении времени хода
+      }
+    }, 1000);
+  });
+
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');
   });
