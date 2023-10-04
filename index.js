@@ -201,6 +201,12 @@ io.on('connection', (socket) => {
     });
   }
 
+  socket.on("first-step", (roomId) => {
+    const room = rooms.find((r) => r.name === roomId);
+    const randomIndex = Math.floor(Math.random() * 2);
+    socket.emit("first-step-result", room.players[randomIndex]);
+  });
+
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');
   });

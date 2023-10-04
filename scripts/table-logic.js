@@ -149,6 +149,26 @@ function handleCardClick(event) {
   }
 }
 
+async function getfirstplayer(socket, roomId) {
+  try {
+    // Отправляем событие "first-step" на сервер с указанием roomId
+    socket.emit("first-step", roomId);
+
+    // Ожидаем ответа от сервера через событие "first-step-result"
+    const firstMove = await new Promise((resolve, reject) => {
+      socket.on("first-step-result", (player) => {
+        resolve(player);
+      });
+    });
+
+    // Возвращаем игрока, который будет первым ходить
+    return firstMove;
+  } catch (error) {
+    console.error("Произошла ошибка при получении первого игрока:", error);
+    throw error;
+  }
+}
+
 // Waitng for enemy
 socket.on("players-ready", () => {
   // Start battle
@@ -167,6 +187,13 @@ socket.on("players-ready", () => {
     socket.emit("get-card", currentLogin);
   }
 
+  getfirstplayer(socket, roomId)
+  .then((firstMove) => {
+    console.log("Первый ходит игрок:", firstMove);
+  });
+
+  socket.emit('start-game');
+
   // Load yuor card
   socket.on("randomCard", (randomCard, login) => {
     if (login == currentLogin) {
@@ -184,45 +211,49 @@ socket.on("players-ready", () => {
   // Take damage
   socket.on("get-damage", (damage, enemyCardId, damaged) => {
     if (damaged == currentLogin) {
-      // let cardElement = null;
-      // console.log(enemyField.children);
-      // for (child of enemyField.children) {
-      //   if (child.classList.contains("card")) {
-      //     cardElement = child.querySelector(`[data-id="${enemyCardId}"]`);
-      //     console.log("123");
-      //     console.log(child.querySelector(`[data-id="${enemyCardId}"]`));
-      //   }
-      // }
-    //   Array.from(enemyField.children).forEach(child => {
-    //     if (child.textContent) {
-    //       cardElement = child.querySelector(`[data-id="${enemyCardId}"]`);
-    //       console.log("adsd");
-    //       console.log(child.firstChild);
-    //       console.log(child.firstElementChild.querySelector(`[data-id="${enemyCardId}"]`));
-    //     }
-    //   });
-    //   console.log(damage);
-    //   console.log(enemyCardId);
-    //   console.log(damaged);
-    //   console.log(cardElement);
-    //   console.log(cardElement.firstElementChild);
-    //   const statsElementText = cardElement.firstElementChild.textContent;
-    //   const healthIndexStart =
-    //     statsElementText.indexOf("Health: ") + "Health: ".length;
-    //   const healthValue = statsElementText.slice(healthIndexStart);
 
-    //   const remainingHealth = healthValue - damage;
+      var enemyCardElements = document.querySelectorAll('.enemy-card');
+      var cardElement = null;
+      for (var i = 0; i < enemyCardElements.length; i++) {
+        var enemyCardElement = enemyCardElements[i];
+        // Внутри каждого элемента .enemy-card находим .card
+        let tempElement = enemyCardElement.querySelector('.card');
+    
+        // Проверяем, есть ли .card внутри .enemy-card и получаем data-id
+        if (tempElement) {
+            var dataIdValue = tempElement.getAttribute('data-id');
+            console.log(dataIdValue);
+            console.log(enemyCardId);
+            // Сравниваем значение data-id с целевым значением
+            if (dataIdValue == enemyCardId) {
+              cardElement = tempElement;
+              console.log(cardElement);
+                break; // Выход из цикла, так как элемент найден
+            }
+        }
+    }
+    console.log('Найден элемент с data-id:', cardElement);
 
-    //   if (remainingHealth <= 0) {
-    //     cardElement.remove();
-    //   } else {
-    //     statsElementText.replace(
-    //       `Health: ${healthValue}`,
-    //       `Health: ${remainingHealth}`
-    //     );
-    //   }
 
-    //   console.log("отримав прочухана");
+
+
+      const statsElementText = cardElement.firstElementChild.textContent;
+      const healthIndexStart =
+        statsElementText.indexOf("Health: ") + "Health: ".length;
+      const healthValue = statsElementText.slice(healthIndexStart);
+
+      const remainingHealth = healthValue - damage;
+
+      if (remainingHealth <= 0) {
+        cardElement.remove();
+      } else {
+        statsElementText.replace(
+          `Health: ${healthValue}`,
+          `Health: ${remainingHealth}`
+        );
+      }
+
+      console.log("отримав прочухана");
     }
   });
 
