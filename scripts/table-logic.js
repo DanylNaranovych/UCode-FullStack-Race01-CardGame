@@ -375,7 +375,7 @@ socket.on("players-ready", () => {
     currentMana = maxMana;
     loadCurrentMana();
     if (isPlayerAllowedToInteract && !isGameEnded) {
-      socket.emit("start-turn-timer", 15, roomId);
+      socket.emit("start-turn-timer", 30, roomId);
       socket.emit("get-card", currentLogin);
       loadCurrentPlayer(currentLogin);
       reloadCardsUsed();
