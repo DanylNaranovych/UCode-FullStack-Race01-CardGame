@@ -3,6 +3,7 @@ const enemyHead = document.querySelector(".enemy-head");
 const myHead = document.querySelector(".my-head");
 const enemyField = document.querySelector(".enemy-field");
 const tableField = document.querySelector(".my-field");
+const timerDisplay = document.getElementById("timer");
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
@@ -13,7 +14,6 @@ let isGameEnded = false;
 let isPlayerAllowedToInteract = false;
 let currentMana = null;
 let maxMana = null;
-
 let currentEnemy = null;
 let currentSocketId = null;
 let sendDamage = {
@@ -261,7 +261,6 @@ socket.on("players-ready", () => {
     if (receiver != currentLogin) {
       return;
     }
-
     console.log("Time is over.");
     if (isPlayerAllowedToInteract && !isGameEnded) {
       isPlayerAllowedToInteract = false;
@@ -275,7 +274,6 @@ socket.on("players-ready", () => {
     currentMana = maxMana;
     if (isPlayerAllowedToInteract && !isGameEnded) {
       socket.emit("start-turn-timer", 10, roomId);
-
       socket.emit("get-card", currentLogin);
     }
   });
@@ -430,34 +428,22 @@ socket.on("players-ready", () => {
     }
   });
 
+  socket.on("timer-duration", (duration) => {
+    let currentTime = duration / 1000;
+  
+    timerInterval = setInterval(() => {
+      currentTime--;
+      timerDisplay.textContent = `${currentTime}`;
+  
+      if (currentTime <= 0) {
+        clearInterval(timerInterval);
+      }
+    }, 1000);
+  });
+
   socket.on("game-ended", (loser) => {
     isGameEnded = true;
     const gameEndMessage = document.getElementById("game-end-message");
     gameEndMessage.innerHTML = `<p style="font-size: 24px; color: red;">Игра завершена! ${loser} проиграл!</p>`;
   });
 });
-
-
-
-
-// Get the timer element
-const timerElement = document.querySelector('.timer');
-
-// Set the initial time in seconds
-let timeLeft = 30;
-
-// Update the timer every second
-const timerInterval = setInterval(() => {
-    // Update the timer display
-    timerElement.textContent = timeLeft;
-
-    // Decrease the time left by 1 second
-    timeLeft--;
-
-    // If the timer reaches 0, clear the interval and perform any desired actions
-    if (timeLeft < 0) {
-        clearInterval(timerInterval);
-        timerElement.textContent = 'Time\'s up!';
-        // Add any actions you want to perform when the timer reaches 0
-    }
-}, 1000);

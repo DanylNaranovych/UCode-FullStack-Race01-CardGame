@@ -242,14 +242,19 @@ io.on('connection', (socket) => {
     socket.emit('game-started', mana);
   });
 
-  socket.on('start-turn-timer', (secconds, roomId) => {
+  socket.on('start-turn-timer', (seconds, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
+    const timerDuration = seconds * 1000;
+  
     setTimeout(() => {
       room.players.forEach(player => {
         io.emit("turn-timeout", player);
       });
-    }, secconds * 1000);
+    }, timerDuration);
+
+    io.emit("timer-duration", timerDuration, roomId);
   });
+  
 
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');
@@ -327,7 +332,6 @@ app.post('/login', async (req, res) => {
 app.get('/forgot-password', (req, res) => {
   res.sendFile(__dirname + '/views/forgot-password.html');
 });
-
 
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
