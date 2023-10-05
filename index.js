@@ -152,7 +152,7 @@ io.on('connection', (socket) => {
                   socket.emit('start-game', room, req.session.user.login);
               }
               if (readyPlayers == 2) {
-                io.emit("timer-duration-ready", 5);
+                io.emit("timer-duration-ready", 4);
                 setTimeout(() => io.emit("players-ready"), 5000);
               }
           }

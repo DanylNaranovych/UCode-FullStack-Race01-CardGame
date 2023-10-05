@@ -313,11 +313,15 @@ socket.on("players-ready", () => {
 
   socket.emit('get_path_by_name_my', currentLogin);
   socket.on('send-path_my', (path) => {
+    if (path != null) {
     myImg.style.backgroundImage = `url("avatars/${path}")`;
+    }
   });
 
   socket.on('send-path_enemy', (path) => {
+    if (path != null) {
     enemyImg.style.backgroundImage = `url("avatars/${path}")`;
+    }
   });
 
 
@@ -331,6 +335,9 @@ socket.on("players-ready", () => {
     console.log("Первый ходит игрок:", firstMove);
     if (currentLogin == firstMove) {
       isPlayerAllowedToInteract = true;
+      loadCurrentPlayer(currentLogin);
+    } else {
+      loadCurrentPlayer(currentEnemy);
     }
   });
 
@@ -541,6 +548,6 @@ socket.on("players-ready", () => {
   socket.on("game-ended", (loser) => {
     isGameEnded = true;
     const gameEndMessage = document.getElementById("game-end-message");
-    gameEndMessage.innerHTML = `<p style="font-size: 24px; color: black;">Игра завершена! ${loser} проиграл!</p>`;
+    gameEndMessage.innerHTML = `<p style="font-size: 24px; color: red; font-family: fantasy;">Игра завершена! ${loser} проиграл!</p>`;
   });
 });
