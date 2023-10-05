@@ -91,10 +91,13 @@ body {
 
 .enemy-hp {
     size:20px;
-    padding:2px;
+    padding:5px;
     font-size: 15px;
     align-self: center;
-    background-color: red;
+    background-image: url("images/heart.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     border-radius: 100%;
 }
 
@@ -109,10 +112,13 @@ body {
 
 .my-hp {
     size:20px;
-    padding:2px;
+    padding:5px;
     font-size: 15px;
     align-self: center;
-    background-color: red;
+    background-image: url("images/heart.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     border-radius: 100%;
 }
 
@@ -284,7 +290,11 @@ body {
 .value {
     width:50px;
     height:50px;
-    background-color: rgb(194, 157, 55);
+    background-image: url("images/coin.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    align-content: center;
     border-radius: 10px;
     color: black;
     position: relative;
@@ -292,7 +302,6 @@ body {
     right: -160px;
     text-align: center;
 }
-
 
 .my-name {
     color: orange;
