@@ -231,6 +231,37 @@ io.on('connection', (socket) => {
     });
   }
 
+  async function findPathByName(name, db) {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT avatar_path FROM ucode_web.users WHERE login = ?`;
+      const values = [name];
+  
+      db.query(sql, values, (err, results) => {
+        if (err) {
+          console.error('Database error: ' + err);
+          reject(err);
+          return;
+        }
+  
+        if (results.length === 0) {
+          resolve(null);
+        } else {
+          const user = results[0];
+          resolve(user);
+        }
+      });
+    });
+  }
+
+  socket.on('get_path_by_name', (name) => {
+    findPathByName(name, db)
+    .then((path) => {
+      if (path) {
+        io.emit('send-path', path.avatar_path);
+      }
+    });
+  });
+
   socket.on("first-step", (roomId) => {
     const room = rooms.find((r) => r.name === roomId);
     const randomIndex = Math.floor(Math.random() * 2);
@@ -242,13 +273,17 @@ io.on('connection', (socket) => {
     socket.emit('game-started', mana);
   });
 
-  socket.on('start-turn-timer', (secconds, roomId) => {
+  socket.on('start-turn-timer', (seconds, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
+    const timerDuration = seconds * 1000;
+
+    io.emit("timer-duration", timerDuration, roomId);
+    
     setTimeout(() => {
       room.players.forEach(player => {
         io.emit("turn-timeout", player);
       });
-    }, secconds * 1000);
+    }, timerDuration);
   });
 
   socket.on('disconnect', () => {
@@ -327,7 +362,6 @@ app.post('/login', async (req, res) => {
 app.get('/forgot-password', (req, res) => {
   res.sendFile(__dirname + '/views/forgot-password.html');
 });
-
 
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
