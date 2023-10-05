@@ -35,7 +35,7 @@ function loadCurrentMana() {
 }
 
 function loadCurrentPlayer(player) {
-  Move.textContent = "turn:" + player;
+  Move.textContent = player;
 }
 
 function reloadCardsUsed() {
@@ -157,7 +157,7 @@ function handleDrop(event) {
     // Clone the card and append it to the table field
     const clonedCard = cardElement.cloneNode(true);
     clonedCard.setAttribute("data-is-used", true);
-    
+
     event.target.appendChild(clonedCard);
 
     // Apply the hover effect to the cloned card
@@ -172,8 +172,8 @@ function handleDrop(event) {
     currentMana -= Number.parseInt(
       getCardPrice(event.target.firstElementChild)
     );
-    
-      loadCurrentMana();
+
+    loadCurrentMana();
 
     // Remove the card from the hand
     cardElement.remove();
@@ -279,12 +279,30 @@ function getfirstplayer(socket, roomId) {
 }
 
 // Waitng for enemy
+socket.on("timer-duration-ready", (time) => {
+  const countdownElement = document.querySelector('.countdown');
+
+  // Set the initial countdown value
+  let countdownValue = time;
+
+  // Function to update the countdown
+  function updateCountdown() {
+    countdownElement.textContent = countdownValue;
+    countdownValue--;
+
+    // Check if the countdown has reached 0
+    if (countdownValue < 0) {
+      countdownElement.style.display = 'none'; // Hide the countdown text
+      clearInterval(interval); // Stop the countdown
+    }
+  }
+
+  // Call the updateCountdown function every second (1000 milliseconds)
+  const interval = setInterval(updateCountdown, 1000);
+});
+
 socket.on("players-ready", () => {
-  const enemyImgPath = get_path_by_name(currentEnemy);
-  const myImgPath = get_path_by_name(currentLogin);
-  enemyImg.style.backgroundImage = `url("${enemyImgPath}")`;
-  myImg.style.backgroundImage = `url("${myImgPath}")`;
-  console.log(myImgPath);
+
   // Start battle
   // Load enemy
   socket.emit("send-enemy", currentLogin, roomId);
@@ -345,7 +363,7 @@ socket.on("players-ready", () => {
       socket.emit("get-card", currentLogin);
       loadCurrentPlayer(currentLogin);
       reloadCardsUsed();
-    }else {
+    } else {
       loadCurrentPlayer(currentEnemy);
     }
   });
@@ -500,11 +518,11 @@ socket.on("players-ready", () => {
 
   socket.on("timer-duration", (duration) => {
     let currentTime = duration / 1000;
-  
+
     timerInterval = setInterval(() => {
       currentTime--;
       timerDisplay.textContent = `${currentTime}`;
-  
+
       if (currentTime <= 0) {
         clearInterval(timerInterval);
       }
@@ -524,3 +542,4 @@ function get_path_by_name(name) {
     return path;
   });
 }
+
