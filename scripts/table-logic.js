@@ -425,3 +425,28 @@ socket.on("players-ready", () => {
     }
   });
 });
+
+
+
+
+// Get the timer element
+const timerElement = document.querySelector('.timer');
+
+// Set the initial time in seconds
+let timeLeft = 30;
+
+// Update the timer every second
+const timerInterval = setInterval(() => {
+    // Update the timer display
+    timerElement.textContent = timeLeft;
+
+    // Decrease the time left by 1 second
+    timeLeft--;
+
+    // If the timer reaches 0, clear the interval and perform any desired actions
+    if (timeLeft < 0) {
+        clearInterval(timerInterval);
+        timerElement.textContent = 'Time\'s up!';
+        // Add any actions you want to perform when the timer reaches 0
+    }
+}, 1000);

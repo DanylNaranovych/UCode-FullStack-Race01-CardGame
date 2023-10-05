@@ -47,10 +47,10 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    width: 183%;
+    width: 200%;
     height: 75vh;
-    border: 4px solid rgb(15, 6, 65);
-    border-radius: 10px;
+    /* border: 4px solid rgb(15, 6, 65);
+    border-radius: 10px; */
     /* Set table height as needed */
     margin-bottom: 20px;
     margin-top: 40px;
@@ -220,18 +220,34 @@ body {
     position: absolute;
     display: flex;
     flex-direction: column;
-    background-color: gray;
-    margin-left: 800px;
+    margin-left: 700px;
 }
 
 .timer {
-    background-color: pink;
-    width: 20px;
-    height: 20px;
+    font-size: 20px;
+    animation: countdown 30s linear forwards;
+}
+
+.end-button::before {
+    content: "end turn";
+    color: white;
+    font-size: 16px;
+    text-align: center;
 }
 
 .end-button {
-    background-color: red;
-    width: 20px;
-    height: 20px;
+    background-color: rgb(114, 38, 35);
+    width: 80px;
+    height: 30px;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.end-button:hover {
+    background-color: rgb(151, 69, 21);
+}
+
+.end-button:active {
+    background-color: gray;
+    color: rgb(66, 66, 66);
 }
