@@ -5,6 +5,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const User = require('./models/user')
 const { connectToDatabase } = require('./db');
+const path = require('path');
 const { findUserByLoginAndPassword, sendPasswordReminderEmail, registerUserAndSaveToDatabase } = require('./model');
 
 const app = express();
@@ -23,10 +24,12 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'avatars/');
+    const destinationPath = path.join('avatars', '/');
+    cb(null, destinationPath);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    const filename = Date.now() + '-' + file.originalname;
+    cb(null, filename);
   },
 });
 
@@ -254,11 +257,20 @@ io.on('connection', (socket) => {
     });
   }
 
-  socket.on('get_path_by_name', (name) => {
+  socket.on('get_path_by_name_enemy', (name) => {
     findPathByName(name, db)
     .then((path) => {
       if (path) {
-        io.emit('send-path', path.avatar_path);
+        socket.emit('send-path_enemy', path.avatar_path);
+      }
+    });
+  });
+
+  socket.on('get_path_by_name_my', (name) => {
+    findPathByName(name, db)
+    .then((path) => {
+      if (path) {
+        socket.emit('send-path_my', path.avatar_path);
       }
     });
   });
@@ -429,7 +441,7 @@ app.get('/lobby', (req, res) => {
 
 app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
   const username = req.session.user.login; 
-  const avatarPath = req.file.path;
+  const avatarPath = req.file.filename;
   const updateQuery = 'UPDATE ucode_web.users SET avatar_path = ? WHERE login = ?';
 
   db.query(updateQuery, [avatarPath, username], (err, result) => {

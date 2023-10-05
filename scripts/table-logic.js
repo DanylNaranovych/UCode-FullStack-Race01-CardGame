@@ -232,8 +232,6 @@ function handleCardClick(event) {
       cardElement.setAttribute("data-is-used", false);
     }
 
-    console.log(card.getAttribute("data-is-used"));
-
     const statsElementText = card.firstElementChild.textContent;
     const attackIndexStart =
       statsElementText.indexOf("Attack: ") + "Attack: ".length;
@@ -302,7 +300,6 @@ socket.on("timer-duration-ready", (time) => {
 });
 
 socket.on("players-ready", () => {
-
   // Start battle
   // Load enemy
   socket.emit("send-enemy", currentLogin, roomId);
@@ -310,13 +307,25 @@ socket.on("players-ready", () => {
   socket.on("get-enemy", (enemy, sender) => {
     if (sender == currentLogin) {
       currentEnemy = enemy;
+      socket.emit('get_path_by_name_enemy', currentEnemy);
     }
   });
+
+  socket.emit('get_path_by_name_my', currentLogin);
+  socket.on('send-path_my', (path) => {
+    myImg.style.backgroundImage = `url("avatars/${path}")`;
+  });
+
+  socket.on('send-path_enemy', (path) => {
+    enemyImg.style.backgroundImage = `url("avatars/${path}")`;
+  });
+
 
   // Generate your cards
   for (let index = 0; index < 3; index++) {
     socket.emit("get-card", currentLogin);
   }
+  
 
   getfirstplayer(socket, roomId).then((firstMove) => {
     console.log("Первый ходит игрок:", firstMove);
@@ -353,7 +362,7 @@ socket.on("players-ready", () => {
       isPlayerAllowedToInteract = true;
     }
 
-    if (maxMana <= 10) {
+    if (maxMana <= 9) {
       maxMana++;
     }
     currentMana = maxMana;
@@ -535,11 +544,3 @@ socket.on("players-ready", () => {
     gameEndMessage.innerHTML = `<p style="font-size: 24px; color: red;">Игра завершена! ${loser} проиграл!</p>`;
   });
 });
-
-function get_path_by_name(name) {
-  socket.emit('get_path_by_name', name);
-  socket.on('send-path', (path) => {
-    return path;
-  });
-}
-
