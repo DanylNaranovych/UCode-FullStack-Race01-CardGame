@@ -9,6 +9,7 @@ const roomId = urlParams.get("roomId");
 const currentLogin = urlParams.get("playerName");
 
 let countCardsInHand = 0;
+let isGameEnded = false;
 let isPlayerAllowedToInteract = false;
 let currentMana = null;
 let maxMana = null;
@@ -36,6 +37,7 @@ function createEnemyCard(card) {
   cardElement.className = "card";
   cardElement.draggable = true;
   cardElement.textContent = card.name;
+  cardElement.style.backgroundImage = `url("images/${card.image_path}")`;
 
   // Create a stats container
   const statsElement = document.createElement("div");
@@ -68,6 +70,7 @@ function createCard(card) {
   cardElement.className = "card";
   cardElement.draggable = true;
   cardElement.textContent = card.name;
+  cardElement.style.backgroundImage = `url("images/${card.image_path}")`;
 
   // Create a stats container
   const statsElement = document.createElement("div");
@@ -260,9 +263,9 @@ socket.on("players-ready", () => {
     }
 
     console.log("Time is over.");
-    if (isPlayerAllowedToInteract) {
+    if (isPlayerAllowedToInteract && !isGameEnded) {
       isPlayerAllowedToInteract = false;
-    } else {
+    } else if (!isGameEnded) {
       isPlayerAllowedToInteract = true;
     }
 
@@ -270,7 +273,7 @@ socket.on("players-ready", () => {
       maxMana++;
     }
     currentMana = maxMana;
-    if (isPlayerAllowedToInteract) {
+    if (isPlayerAllowedToInteract && !isGameEnded) {
       socket.emit("start-turn-timer", 10, roomId);
 
       socket.emit("get-card", currentLogin);
@@ -392,7 +395,9 @@ socket.on("players-ready", () => {
     const myHp = head.children[1].textContent;
     const remainingHp = myHp - damage;
     if (remainingHp <= 0) {
-      // proebal
+      head.children[1].textContent = `0`;
+      socket.emit("send-remainig-hp", `0`, currentLogin);
+      socket.emit("end-game", currentLogin);
     } else {
       head.children[1].textContent = remainingHp;
       socket.emit("send-remainig-hp", remainingHp, currentLogin);
@@ -423,6 +428,12 @@ socket.on("players-ready", () => {
       socket.emit("send-player-damage", currentLogin, sendDamage.damage);
       sendDamage.damage = null;
     }
+  });
+
+  socket.on("game-ended", (loser) => {
+    isGameEnded = true;
+    const gameEndMessage = document.getElementById("game-end-message");
+    gameEndMessage.innerHTML = `<p style="font-size: 24px; color: red;">Игра завершена! ${loser} проиграл!</p>`;
   });
 });
 
