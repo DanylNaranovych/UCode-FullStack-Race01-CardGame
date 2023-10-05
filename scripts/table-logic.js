@@ -4,6 +4,8 @@ const myHead = document.querySelector(".my-head");
 const enemyField = document.querySelector(".enemy-field");
 const tableField = document.querySelector(".my-field");
 const manaValue = document.querySelector(".value");
+const enemyName = document.querySelector(".enemy-name");
+const myName = document.querySelector(".my-name");
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
@@ -254,6 +256,8 @@ socket.on("players-ready", () => {
     maxMana = mana;
     currentMana = maxMana;
     loadCurrentMana();
+    myName.textContent = currentLogin;
+    enemyName.textContent = currentEnemy;
     if (isPlayerAllowedToInteract) {
       console.log(`${currentLogin}'s move now`);
 
