@@ -19,6 +19,7 @@ let currentEnemy = null;
 let currentSocketId = null;
 let sendDamage = {
   damage: null,
+  attackingCardId: null,
   enemyCard: null,
 };
 
@@ -26,6 +27,19 @@ const socket = io();
 
 function loadCurrentMana() {
   manaValue.textContent = currentMana;
+}
+
+function reloadCardsUsed() {
+  let myCardElements = document.querySelectorAll(".my-card");
+
+  for (let i = 0; i < myCardElements.length; i++) {
+    let myCardElement = myCardElements[i];
+    let tempElement = myCardElement.querySelector(".card");
+
+    if (tempElement) {
+      tempElement.setAttribute("data-is-used", false);
+    }
+  }
 }
 
 function getCardPrice(card) {
@@ -67,8 +81,10 @@ function createEnemyCard(card) {
 
 // Function to create a card element with stats
 function createCard(card) {
-  if (countCardsInHand >= 7) {
+  if (countCardsInHand >= 6) {
     return;
+  } else {
+    countCardsInHand++;
   }
 
   const cardElement = document.createElement("div");
@@ -89,6 +105,7 @@ function createCard(card) {
   cardElement.appendChild(statsElement);
 
   cardElement.dataset.id = card.id;
+  cardElement.setAttribute("data-is-used", false);
   // return cardElement;
   hand.appendChild(cardElement);
 
@@ -130,6 +147,8 @@ function handleDrop(event) {
   if (event.target.classList.contains("my-card")) {
     // Clone the card and append it to the table field
     const clonedCard = cardElement.cloneNode(true);
+    clonedCard.setAttribute("data-is-used", true);
+    
     event.target.appendChild(clonedCard);
 
     // Apply the hover effect to the cloned card
@@ -149,6 +168,7 @@ function handleDrop(event) {
 
     // Remove the card from the hand
     cardElement.remove();
+    countCardsInHand--;
 
     socket.emit("put-card", cardId, currentLogin);
   }
@@ -162,6 +182,11 @@ function handleCardClick(event) {
   }
 
   const card = event.target;
+
+  if (card.getAttribute("data-is-used") == "true") {
+    alert("This card is used already");
+    return;
+  }
 
   if (
     card.classList.contains("card") &&
@@ -177,8 +202,30 @@ function handleCardClick(event) {
     card.classList.toggle("glow");
   }
 
-  if (event.target.parentElement.className == "my-card") {
-    const statsElementText = event.target.firstElementChild.textContent;
+  if (card.parentElement.className == "my-card") {
+    if (sendDamage.attackingCardId) {
+      let myCardElements = document.querySelectorAll(".my-card");
+      let cardElement = null;
+
+      for (let i = 0; i < myCardElements.length; i++) {
+        let myCardElement = myCardElements[i];
+        let tempElement = myCardElement.querySelector(".card");
+
+        if (tempElement) {
+          let searchedCardId = tempElement.getAttribute("data-id");
+          if (searchedCardId == sendDamage.attackingCardId) {
+            cardElement = tempElement;
+            break;
+          }
+        }
+      }
+
+      cardElement.setAttribute("data-is-used", false);
+    }
+
+    console.log(card.getAttribute("data-is-used"));
+
+    const statsElementText = card.firstElementChild.textContent;
     const attackIndexStart =
       statsElementText.indexOf("Attack: ") + "Attack: ".length;
     const attackIndexEnd = statsElementText.indexOf(",", attackIndexStart);
@@ -187,19 +234,17 @@ function handleCardClick(event) {
       attackIndexEnd
     );
     sendDamage.damage = attackValue;
+    sendDamage.attackingCardId = card.dataset.id;
+    card.setAttribute("data-is-used", true);
   } else {
-    sendDamage.enemyCard = event.target.dataset.id;
+    sendDamage.enemyCard = card.dataset.id;
   }
 
   if (sendDamage.damage != null && sendDamage.enemyCard != null) {
-    socket.emit(
-      "send-damage",
-      sendDamage,
-      // sendDamage.enemyCard,
-      currentLogin,
-      roomId
-    );
+    socket.emit("send-damage", sendDamage, currentLogin, roomId);
+
     sendDamage.damage = null;
+    sendDamage.attackingCardId = null;
     sendDamage.enemyCard = null;
   }
 }
@@ -282,6 +327,7 @@ socket.on("players-ready", () => {
     if (isPlayerAllowedToInteract && !isGameEnded) {
       socket.emit("start-turn-timer", 15, roomId);
       socket.emit("get-card", currentLogin);
+      reloadCardsUsed();
     }
   });
 
@@ -427,11 +473,9 @@ socket.on("players-ready", () => {
   tableField.addEventListener("click", handleCardClick);
   enemyHead.addEventListener("click", (event) => {
     if (sendDamage.damage) {
-      // const head = event.target.parentElement;
-      // const enemyHp = head.children[1].textContent;
-
       socket.emit("send-player-damage", currentLogin, sendDamage.damage);
       sendDamage.damage = null;
+      sendDamage.attackingCardId = null;
     }
   });
 
