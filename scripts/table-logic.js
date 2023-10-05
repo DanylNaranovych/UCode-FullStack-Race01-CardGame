@@ -541,6 +541,6 @@ socket.on("players-ready", () => {
   socket.on("game-ended", (loser) => {
     isGameEnded = true;
     const gameEndMessage = document.getElementById("game-end-message");
-    gameEndMessage.innerHTML = `<p style="font-size: 24px; color: red;">Игра завершена! ${loser} проиграл!</p>`;
+    gameEndMessage.innerHTML = `<p style="font-size: 24px; color: black;">Игра завершена! ${loser} проиграл!</p>`;
   });
 });
