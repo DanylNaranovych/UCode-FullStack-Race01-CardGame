@@ -340,7 +340,7 @@ socket.on("players-ready", () => {
       isPlayerAllowedToInteract = true;
     }
 
-    if (maxMana <= 10) {
+    if (maxMana <= 9) {
       maxMana++;
     }
     currentMana = maxMana;
