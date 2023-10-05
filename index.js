@@ -92,6 +92,10 @@ io.on('connection', (socket) => {
     io.emit("get-login", (req.session.user.login));
   });
 
+  socket.on("end-game", (loser) => {
+    io.emit("game-ended", loser);
+  });
+
   socket.on('get-room', (roomid) => {
     const room = rooms.find((r) => r.name === roomid);
     if (room) {
