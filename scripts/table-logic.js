@@ -3,6 +3,7 @@ const enemyHead = document.querySelector(".enemy-head");
 const myHead = document.querySelector(".my-head");
 const enemyField = document.querySelector(".enemy-field");
 const tableField = document.querySelector(".my-field");
+const manaValue = document.querySelector(".value");
 const timerDisplay = document.getElementById("timer");
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -22,6 +23,10 @@ let sendDamage = {
 };
 
 const socket = io();
+
+function loadCurrentMana() {
+  manaValue.textContent = currentMana;
+}
 
 function getCardPrice(card) {
   const statsElementText = card.firstElementChild.textContent;
@@ -139,7 +144,8 @@ function handleDrop(event) {
     currentMana -= Number.parseInt(
       getCardPrice(event.target.firstElementChild)
     );
-    console.log(currentMana);
+    
+      loadCurrentMana();
 
     // Remove the card from the hand
     cardElement.remove();
@@ -247,7 +253,7 @@ socket.on("players-ready", () => {
   socket.on("game-started", (mana) => {
     maxMana = mana;
     currentMana = maxMana;
-    console.log(`Mana:${mana}`);
+    loadCurrentMana();
     if (isPlayerAllowedToInteract) {
       console.log(`${currentLogin}'s move now`);
 
@@ -272,6 +278,7 @@ socket.on("players-ready", () => {
       maxMana++;
     }
     currentMana = maxMana;
+    loadCurrentMana();
     if (isPlayerAllowedToInteract && !isGameEnded) {
       socket.emit("start-turn-timer", 10, roomId);
       socket.emit("get-card", currentLogin);
