@@ -7,6 +7,8 @@ const manaValue = document.querySelector(".value");
 const enemyName = document.querySelector(".enemy-name");
 const myName = document.querySelector(".my-name");
 const timerDisplay = document.getElementById("timer");
+const enemyImg = document.querySelector('.enemy-head');
+const myImg = document.querySelector('.my-head');
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
@@ -273,6 +275,11 @@ function getfirstplayer(socket, roomId) {
 
 // Waitng for enemy
 socket.on("players-ready", () => {
+  const enemyImgPath = get_path_by_name(currentEnemy);
+  const myImgPath = get_path_by_name(currentLogin);
+  enemyImg.style.backgroundImage = `url("${enemyImgPath}")`;
+  myImg.style.backgroundImage = `url("${myImgPath}")`;
+  console.log(myImgPath);
   // Start battle
   // Load enemy
   socket.emit("send-enemy", currentLogin, roomId);

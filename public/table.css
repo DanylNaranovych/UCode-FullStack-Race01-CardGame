@@ -83,7 +83,9 @@ body {
 .enemy-head {
     width: 60px;
     height: 60px;
-    background-color: red;
+    background-image: none;
+    background-size: cover;
+    background-position: center;
     border-radius: 100%;
 }
 
@@ -99,7 +101,9 @@ body {
 .my-head {
     width: 60px;
     height: 60px;
-    background-color: rgb(153, 0, 255);
+    background-image: none;
+    background-size: cover;
+    background-position: center;
     border-radius: 100%;
 }
 
@@ -289,3 +293,11 @@ body {
     text-align: center;
 }
 
+
+.my-name {
+    color: orange;
+}
+
+.enemy-name {
+    color: orange;
+}
