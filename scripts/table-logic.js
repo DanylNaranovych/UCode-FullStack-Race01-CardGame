@@ -9,6 +9,7 @@ const myName = document.querySelector(".my-name");
 const timerDisplay = document.getElementById("timer");
 const enemyImg = document.querySelector('.enemy-head');
 const myImg = document.querySelector('.my-head');
+const Move = document.querySelector('.currentMove');
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("roomId");
@@ -31,6 +32,10 @@ const socket = io();
 
 function loadCurrentMana() {
   manaValue.textContent = currentMana;
+}
+
+function loadCurrentPlayer(player) {
+  Move.textContent = "turn:" + player;
 }
 
 function reloadCardsUsed() {
@@ -338,7 +343,10 @@ socket.on("players-ready", () => {
     if (isPlayerAllowedToInteract && !isGameEnded) {
       socket.emit("start-turn-timer", 15, roomId);
       socket.emit("get-card", currentLogin);
+      loadCurrentPlayer(currentLogin);
       reloadCardsUsed();
+    }else {
+      loadCurrentPlayer(currentEnemy);
     }
   });
 

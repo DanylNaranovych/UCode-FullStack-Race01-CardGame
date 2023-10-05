@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS ucode_web;
-CREATE USER IF NOT EXISTS 'dnaranoyc'@'localhost' IDENTIFIED BY 'securepass';
-GRANT ALL ON ucode_web.* TO 'dnaranovyc'@'localhost';
+CREATE USER IF NOT EXISTS 'oputij'@'localhost' IDENTIFIED BY 'securepass';
+GRANT ALL ON ucode_web.* TO 'oputij'@'localhost';
 
 CREATE TABLE IF NOT EXISTS ucode_web.users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,27 +19,28 @@ CREATE TABLE IF NOT EXISTS ucode_web.cards (
     hp INT NOT NULL,
     damage INT NOT NULL,
     cost INT NOT NULL,
-    description TEXT
+    description TEXT,
+    image_path VARCHAR(255)
 );
 
-INSERT INTO ucode_web.cards (name, type, hp, damage, cost, description) VALUES
-    ('пироМЯУнт', 'creature', 2, 3, 3, 'клич наносит 1 урона всему столу;'),
-    ('бродягя', 'creature', 1, 1, 0, ''),
-    ('КОТострофа', 'creature', 10, 10, 10, 'провокация;'),
-    ('Шерстяной торнадо', 'spell', 6, 0, 5, 'заклинание наносит 3 урона всему столу даёт кота в руку;'),
-    ('Наёмник', 'creature', 3, 3, 3, 'клич убивает случайное существо противника;'),
-    ('Динамит', 'creature', 2, 5, 5, 'провокация хрип наносит 2 урона всему столу;'),
-    ('бард', 'creature', 1, 2, 2, 'клич бери карту;'),
-    ('кошачий глаз', 'spell', 0, 0, 4, 'бери 3 карты;'),
-    ('предсказатель', 'creature', 3, 4, 4, 'хрип бери карту;'),
-    ('ніжки', 'creature', 5, 3, 4, ''),
-    ('Лерой Мурлойкинс', 'creature', 6, 2, 3, 'клич призывает 2 Мурлока-помощника 1/1 на поле боя для вашего противника;'),
-    ('Ня! смерть', 'spell', 0, 0, 5, 'убивает выбраное существо;'),
-    ('МУР-дрец', 'creature', 3, 5, 5, 'заклинания получают +2 к урону;'),
-    ('НекроМЯУнт', 'creature', 5, 5, 7, 'призывает 2 скелетокота 2/2;'),
-    ('дротик', 'spell', 0, 0, 2, 'наносит 2 урона;'),
-    ('валерьяна', 'spell', 0, 0, 4, 'лечит 5 хп;'),
-    ('ручная брызгалка', 'spell', 0, 0, 4, 'возвращает кота в руку;'),
-    ('кошачий корм', 'spell', 0, 0, 3, 'лечит всем существам 2 хп;'),
-    ('воришка', 'creature', 1, 2, 1, 'клич даёт монетку;'),
-    ('танк', 'creature', 10, 5, 7, 'танк');
+INSERT INTO ucode_web.cards (name, type, hp, damage, cost, description, image_path) VALUES
+    ('ПироМЯУнт', 'creature', 2, 3, 3, 'горит','1.jpg'),
+    ('Бродягя', 'creature', 1, 1, 0, 'кубик','2.jpg'),
+    ('КОТострофа', 'creature', 10, 10, 10, 'ужасающе стоит','3.jpg'),
+    ('Шерстяной торнадо', 'spell', 6, 0, 5, 'кошачее бедствие','4.jpg'),
+    ('Наёмник', 'creature', 3, 3, 3, 'вооружён и опасен','5.jpg'),
+    ('Динамит', 'creature', 2, 5, 5, 'взрывоопасно','6.jpg'),
+    ('Бард', 'creature', 1, 2, 2, 'заплати ведьмаку чеканой монетой','7.jpg'),
+    ('Кошачий глаз', 'spell', 6, 3, 4, 'бдит','8.jpg'),
+    ('Предсказатель', 'creature', 3, 4, 4, 'видит твою судьбу','9.jpg'),
+    ('Ніжки', 'creature', 5, 3, 4, 'диви що є','10.jpg'),
+    ('Лерой Мурлойкинс', 'creature', 6, 2, 3, 'клич призывает 2 Мурлока-помощника 1/1 на поле боя для вашего противника;','11.jpg'),
+    ('Ня! смерть', 'spell', 1, 20, 5, 'убивает','12.jpg'),
+    ('МУР-дрец', 'creature', 3, 5, 5, 'познаёт мир','13.jpg'),
+    ('НекроМЯУнт', 'creature', 5, 8, 7, 'нежить украли(','14.jpg'),
+    ('Лапка', 'creature', 0, 0, 2, 'агресия','15.jpg'),
+    ('обычний кот', 'spell', 7, 5, 6, 'лечит 5 хп;','16.jpg'),
+    ('одеський кіт', 'spell', 3, 2, 10, 'возвращает кота в руку;','17.jpg'),
+    ('бджола', 'spell', 1, 2, 1, 'бззззззз','18.jpg'),
+    ('Воришка', 'creature', 1, 2, 1, 'клич даёт монетку;','19.jpg'),
+    ('Танк', 'creature', 20, 5, 7, 'любит эту роль','20.jpg');

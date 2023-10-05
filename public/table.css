@@ -288,20 +288,23 @@ body {
 }
 
 .value {
-    width:50px;
-    height:50px;
+    width: 50px;
+    height: 50px;
     background-image: url("images/coin.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    align-content: center;
     border-radius: 10px;
     color: black;
     position: relative;
     bottom: -257px;
     right: -160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
 }
+
 
 .my-name {
     color: orange;
