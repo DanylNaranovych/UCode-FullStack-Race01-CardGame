@@ -498,3 +498,10 @@ socket.on("players-ready", () => {
     gameEndMessage.innerHTML = `<p style="font-size: 24px; color: red;">Игра завершена! ${loser} проиграл!</p>`;
   });
 });
+
+function get_path_by_name(name) {
+  socket.emit('get_path_by_name', name);
+  socket.on('send-path', (path) => {
+    return path;
+  });
+}
