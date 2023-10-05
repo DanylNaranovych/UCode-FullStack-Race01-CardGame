@@ -280,7 +280,7 @@ socket.on("players-ready", () => {
     currentMana = maxMana;
     loadCurrentMana();
     if (isPlayerAllowedToInteract && !isGameEnded) {
-      socket.emit("start-turn-timer", 10, roomId);
+      socket.emit("start-turn-timer", 15, roomId);
       socket.emit("get-card", currentLogin);
     }
   });

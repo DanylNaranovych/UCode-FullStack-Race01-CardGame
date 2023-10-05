@@ -245,16 +245,15 @@ io.on('connection', (socket) => {
   socket.on('start-turn-timer', (seconds, roomId) => {
     const room = rooms.find((r) => r.name === roomId);
     const timerDuration = seconds * 1000;
-  
+
+    io.emit("timer-duration", timerDuration, roomId);
+    
     setTimeout(() => {
       room.players.forEach(player => {
         io.emit("turn-timeout", player);
       });
     }, timerDuration);
-
-    io.emit("timer-duration", timerDuration, roomId);
   });
-  
 
   socket.on('disconnect', () => {
       console.log('disconnected from socket server');
